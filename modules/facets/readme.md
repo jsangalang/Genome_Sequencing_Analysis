@@ -6,3 +6,5 @@
 2. Copy Number: the sum of the major and minor allele counts eg if ABB, copy number = 3
 
 #### heterozygous mutation
+
+The presence of two different alleles at a particular gene locus. A heterozygous genotype may include one normal allele and one mutated allele or two different mutated alleles (compound heterozygote)
