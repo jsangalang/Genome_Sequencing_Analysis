@@ -1,4 +1,47 @@
 {
+    "pipeline": {
+        "SEQ" : "humain",
+        "TYPE": "WGS"
+    },
+
+    "tools": {
+        "fastqc"    : True,
+        "bqsr"      : True,
+        "facets"    : True,
+        "cnv_facets": True,
+        "flagstat"  : True,
+        "mosdepth"  : True,
+        "annovar"   : True,
+        "hsmetrics" : True,
+        "haplotype" : True, 
+
+        "mutect2"   : {
+            "samples"       : True,
+            "annovar"       : True,
+            "oncotator"     : True,
+            "oncotator_exom": True
+        },
+
+        "mutect2_pon": {
+            "samples"       : False,
+            "oncotator"     : False,
+            "oncotator_exom": False
+        },
+
+        "mutect2_tumor_only": {
+            "samples"       : False,
+            "annovar"       : False,
+            "oncotator"     : False,
+            "oncotator_exom": False
+        },
+
+        "mutect2_tumor_only_pon": {
+            "samples"       : False,
+            "oncotator"     : False,
+            "oncotator_exom": False
+        }
+    },
+
     "APP_ANNOVAR"                                       : "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/table_annovar.pl",
     "APP_BWA"                                           : "/mnt/beegfs/software/bwa/2.2.1/bin/bwa-mem2",
     "APP_BCFTOOLS"                                      : "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/bcftools",    
