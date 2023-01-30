@@ -1,0 +1,2 @@
+include: "flagstat.smk"
+

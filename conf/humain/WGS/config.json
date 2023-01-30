@@ -1,7 +1,8 @@
 {
     "pipeline": {
         "SEQ" : "humain",
-        "TYPE": "WGS"
+        "TYPE": "WGS",
+        "PAIR": "PE"
     },
 
     "tools": {
