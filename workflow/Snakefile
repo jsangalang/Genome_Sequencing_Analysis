@@ -61,43 +61,43 @@ rule all:
         expand("{sample}", sample = ONCOTATOR_EXOM_SAMPLES if config["tools"]["mutect2"]["oncotator_exom"] else []),
         expand("{sample}", sample = MUTECT2_FOR_PON_SAMPLES if config["tools"]["mutect2_pon"]["samples"] else []),
 
-include: "modules/Fastp/main.smk"
-include: "modules/Bam/main.smk"
+include: "rules/Fastp/main.smk"
+include: "rules/Bam/main.smk"
 
 if config["tools"]["fastqc"]:
-    include: "modules/Fastqc/main.smk"
+    include: "rules/Fastqc/main.smk"
 
 if config["tools"]["facets"]:
-    include: "modules/Facets/main.smk"
+    include: "rules/Facets/main.smk"
 
 if config["tools"]["cnv_facets"]:
-    include: "modules/Facets/main.smk"
+    include: "rules/Facets/main.smk"
 
 if config["tools"]["hsmetrics"]:
-    include: "modules/HsMetrics/main.smk"
+    include: "rules/HsMetrics/main.smk"
 
 if config["tools"]["bqsr"]:
-    include: "modules/BQSR/main.smk"
+    include: "rules/BQSR/main.smk"
 
 if config["tools"]["haplotype"]:
-    include: "modules/HaplotypeCaller/main.smk"
+    include: "rules/HaplotypeCaller/main.smk"
 
 if config["tools"]["mosdepth"]:
-    include: "modules/Msodepth/main.smk"
+    include: "rules/Msodepth/main.smk"
 
 if config["tools"]["flagstat"]:
-    include: "modules/Flagstat/main.smk"
+    include: "rules/Flagstat/main.smk"
 
 if config["tools"]["mutect2"]["samples"]:
-    include: "modules/Mutect2/Std/main.smk"
+    include: "rules/Mutect2/Std/main.smk"
 
 if config["tools"]["mutect2_pon"]["samples"]:
-    include: "modules/Mutect2/Pon/main.smk"
+    include: "rules/Mutect2/Pon/main.smk"
 
 if config["tools"]["mutect2_tumor_only"]["samples"]:
-    include: "modules/Mutect2/TumorOnly/main.smk"
+    include: "rules/Mutect2/TumorOnly/main.smk"
 
 if config["tools"]["mutect2_tumor_only_pon"]["samples"]:
-    include: "modules/Mutect2/TumorOnlyPon/main.smk"
+    include: "rules/Mutect2/TumorOnlyPon/main.smk"
 
 
