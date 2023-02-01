@@ -1,7 +1,7 @@
-if config["pipeline"]["PAIR"] == "PE":
+if config["pipeline"]["PAIRED"]:
     include: "paired.smk"
 else:
     include: "single.smk"
 
-"bam.smk"
+include: "bam.smk"
 

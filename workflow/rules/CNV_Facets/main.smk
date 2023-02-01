@@ -1,1 +1,1 @@
-include: cnvFacets.smk
+include: "cnvFacets.smk"

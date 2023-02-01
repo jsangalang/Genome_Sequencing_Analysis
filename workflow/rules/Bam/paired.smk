@@ -12,7 +12,7 @@ rule bwa_map_paired:
         queue = "mediumq",
         bwa = config["APP_BWA"],
         samtools = config["APP_SAMTOOLS"]
-    threads: 48
+    threads: 16
     resources:
         mem_mb = 51200
     shell:
