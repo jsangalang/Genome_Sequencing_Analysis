@@ -5,6 +5,7 @@
 A Snakemake workflow for humain/mouse WGS/WES analysis. 
 
 ## Usage
+#### On flamingo [Slurm]
 - Step 1. create conda envirements 
 - Step 2. deploy workflow
 - Step 3. configure workflow
