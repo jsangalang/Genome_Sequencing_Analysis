@@ -4,8 +4,8 @@ rule fastqc_clean:
     input:
         fastq_clean="DNA_samples_clean/{sample}.fastq.gz",
     output:
-        'fastq_QC_clean/clean_{sample}_fastqc.html',
-        'fastq_QC_clean/clean_{sample}_fastqc.zip'
+        'fastq_QC_clean/{sample}_fastqc.html',
+        'fastq_QC_clean/{sample}_fastqc.zip'
     log:
         "logs/fastq_QC_clean/{sample}_fastqc.html.log"
     params:    

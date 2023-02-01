@@ -3,7 +3,7 @@
 rule fastp_PE:
     input:
         fastq_1="DNA_samples/{sample}_1.fastq.gz",
-        fastq_2="DNA_samples/{sample}_2.fastq.gz"
+        fastq_2="DNA_samples/{sample}_2.fastq.gz",
     output:
         fastq_clean_1='DNA_samples_clean/{sample}_1.fastq.gz',
         fastq_clean_2='DNA_samples_clean/{sample}_2.fastq.gz',

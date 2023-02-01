@@ -47,7 +47,7 @@ rule all:
     input:
         expand('bam/{sample}.nodup.recal.bam', sample =  NSAMPLE + TSAMPLE),
         expand('fastq_QC_raw/{fastq_sample}_fastqc.html', fastq_sample = FASTQ_SAMPLES.name if config["tools"]["fastqc"] else []),
-        expand('fastq_QC_clean/clean_{fastq_sample}_fastqc.html', fastq_sample =  FASTQ_SAMPLES.name if config["tools"]["fastqc"] else []),
+        expand('fastq_QC_clean/{fastq_sample}_fastqc.html', fastq_sample =  FASTQ_SAMPLES.name if config["tools"]["fastqc"] else []),
         expand(FACETS_SAMPLES if config["tools"]["facets"] else []),
         expand(CNV_FACETS_SAMPLES if config["tools"]["cnv_facets"] else []),
         expand('mapping_QC/HsMetrics/{sample}_HsMetrics.tsv', sample = TSAMPLE + NSAMPLE if config["tools"]["hsmetrics"] else []),
@@ -60,8 +60,6 @@ rule all:
         expand(ONCOTATOR_SAMPLES if config["tools"]["mutect2"]["oncotator"] else []),
         expand(ONCOTATOR_EXOM_SAMPLES if config["tools"]["mutect2"]["oncotator_exom"] else []),
         expand(MUTECT2_FOR_PON_SAMPLES if config["tools"]["mutect2_pon"]["samples"] else []),
-
-print(NSAMPLE + TSAMPLE)
 
 #### bam files ####
 include: "rules/Fastp/main.smk"
