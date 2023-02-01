@@ -5,10 +5,10 @@
 A Snakemake workflow for humain/mouse WGS/WES analysis. 
 
 ## Usage
-Step 1. create conda envirements 
-Step 2. deploy workflow
-Step 3. configure workflow
-Step 4. run workflow
+- Step 1. create conda envirements 
+- Step 2. deploy workflow
+- Step 3. configure workflow
+- Step 4. run workflow
 
 # TODO
 
