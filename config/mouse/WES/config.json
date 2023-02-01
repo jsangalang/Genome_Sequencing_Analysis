@@ -1,4 +1,47 @@
 {
+    "pipeline": {
+        "SEQ" : "mouse",
+        "TYPE": "WES",
+        "PAIRED": True
+    },
+
+    "tools": {
+        "fastqc"    : True,
+        "bqsr"      : True,
+        "facets"    : True,
+        "cnv_facets": True,
+        "flagstat"  : True,
+        "mosdepth"  : True,
+        "annovar"   : True,
+        "hsmetrics" : True,
+        "haplotype" : True, 
+
+        "mutect2"   : {
+            "samples"       : True,
+            "annovar"       : True,
+            "oncotator"     : True,
+            "oncotator_exom": True
+        },
+
+        "mutect2_pon": {
+            "samples"       : False,
+            "oncotator"     : False,
+            "oncotator_exom": False
+        },
+
+        "mutect2_tumor_only": {
+            "samples"       : False,
+            "annovar"       : False,
+            "oncotator"     : False,
+            "oncotator_exom": False
+        },
+
+        "mutect2_tumor_only_pon": {
+            "samples"       : False,
+            "oncotator"     : False,
+            "oncotator_exom": False
+        }
+    },
     "APP_ANNOVAR"                                       : "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/table_annovar.pl",
     "APP_BWA"                                           : "/home/j_wang@intra.igr.fr/.conda/envs/meta_prism/bin/bwa",
     "APP_BCFTOOLS"                                      : "/home/j_wang@intra.igr.fr/.conda/envs/meta_prism/bin/bcftools",
