@@ -7,7 +7,7 @@
 
     "tools": {
         "fastqc"    : True,
-        "bqsr"      : True,
+        "bqsr"      : False,
         "facets"    : True,
         "cnv_facets": True,
         "flagstat"  : True,

@@ -54,7 +54,7 @@ rule all:
         expand("mapping_QC/flagstat/{sample}_flagstat.txt",   sample = TSAMPLE + NSAMPLE if config["tools"]["flagstat"] else []),
         expand("mapping_QC/mosdepth/{sample}.mosdepth.global.dist.txt", sample = TSAMPLE + NSAMPLE if config["tools"]["mosdepth"] else []),
         expand("BQSR/{sample}_BQSR_report.pdf", sample = TSAMPLE + NSAMPLE if config["tools"]["bqsr"] else []),
-        expand("haplotype_caller/{sample}_germline_variants.vcf.gz", sample = NSAMPLE if config["tools"]["haplotype"] else []),
+        # expand("haplotype_caller/{sample}_germline_variants.vcf.gz", sample = NSAMPLE if config["tools"]["haplotype"] else []),
         expand("annovar/{sample}.avinput", sample = NSAMPLE + TSAMPLE if config["tools"]["annovar"] else []),
         expand(MUTECT2_SAMPLES if config["tools"]["mutect2"]["samples"] else []),
         expand(ONCOTATOR_SAMPLES if config["tools"]["mutect2"]["oncotator"] else []),

@@ -40,6 +40,7 @@ rule analyze_covariates_bqsr:
     resources:
         mem_mb = 51200
     shell:
+        "module load r/4.1.1 && "
         "{params.gatk} --java-options \"-Xmx40g -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp -XX:+UseParallelGC -XX:ParallelGCThreads={threads} \" AnalyzeCovariates"
         " --before-report-file {input.table1}"
         " --after-report-file {input.table2}"

@@ -7,6 +7,5 @@ include: "filterOB.smk"
 if config["pipeline"]["SEQ"] == "humain":
     include: "Split/main.smk"
     include: "Exom/main.smk"
-
 else:
     include: "Annovar/main.smk"
