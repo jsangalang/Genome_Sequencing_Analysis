@@ -1,5 +1,5 @@
 include: "mutect2.smk"
-include: "filterVC.smk"
+include: "filterMC.smk"
 include: "../Common/collectSeqAM.smk"
 include: "../Common/estiContamination.smk"
 include: "filterOB.smk"
