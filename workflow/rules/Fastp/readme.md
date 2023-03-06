@@ -23,6 +23,8 @@ overlap-analysis-based trim method, two assumptions:
 1. the first is that only one adapter exists in the data
 2. the second is that adapter sequences exist only in the read tails. 
 
+remark: For SE data, if an adapter sequence is given, then automatic adapter-sequence detection will be disabled. For PE data, the adapter sequence will be used for sequence-matching-based adapter trimming only when fastp fails to detect a good overlap in the pair.
+
 - **--trim_poly_g** # force polyG tail trimming, by default trimming is automatically enabled for Illumina NextSeq/NovaSeq data
 
 - **--trim_poly_x** # enable polyX trimming in 3' ends.
