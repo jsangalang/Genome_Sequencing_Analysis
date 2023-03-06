@@ -8,7 +8,7 @@ A Snakemake workflow for humain/mouse WGS/WES analysis.
 #### On flamingo [Slurm]
 - Step 0. clone github workflow project on flamingo
 ```
-$ ssh username@igr.flamingo.fr
+$ ssh username@flamingo.intra.igr.fr
 $ git clone https://github.com/jinxin-wang/Genome_Sequencing_Analysis.git
 ```
 - Step 1. create conda envirements 
