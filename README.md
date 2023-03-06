@@ -6,11 +6,34 @@ A Snakemake workflow for humain/mouse WGS/WES analysis.
 
 ## Usage
 #### On flamingo [Slurm]
+- Step 0. clone github workflow project on flamingo
+```
+$ ssh username@igr.flamingo.fr
+$ git clone https://github.com/jinxin-wang/Genome_Sequencing_Analysis.git
+```
 - Step 1. create conda envirements 
+```
+$ conda env create -f META_PRISM_conda_env.txt
+$ conda env create -f Mouse_env.txt
+$ conda env create -f pipeline_GATK_2.1.4_conda_env.txt
+```
 - Step 2. deploy workflow
+```
+$ cd /mnt/beegfs/scratch/username/yourprojectdir
+$ mkdir projectname
+$ cd projectname
+$ ln -s /workflowpath/workflow .
+$ ln -s /workflowpath/conf .
+$ cp /workflowpath/run.sh .
+```
 - Step 3. configure workflow
+```
+$ emacs -nw run.sh
+```
 - Step 4. run workflow
-
+```
+$ ./run.sh
+```
 # TODO
 
 * Replace `<owner>` and `<repo>` everywhere in the template (also under .github/workflows) with the correct `<repo>` name and owning user or organization.
