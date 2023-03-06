@@ -1,5 +1,6 @@
 #### [fastp](https://github.com/OpenGene/fastp#readme): A tool designed to provide fast all-in-one preprocessing for FastQ files. 
 version 0.20.1
+[paper](https://academic.oup.com/bioinformatics/article/34/17/i884/5093234)
 
 ### Review of the used options in the rules
 
@@ -23,7 +24,7 @@ version 0.20.1
 
 - **-l, --length_required 25** # reads shorter than length_required will be discarded, default is 15.
 
-- **-p, --overrepresentation_analysis** # enable [overrepresented sequence analysis](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/9%20Overrepresented%20Sequences.html).
+- **-p, --overrepresentation_analysis** # enable overrepresented sequence analysis
 
 - **--adapter_fasta** # specify a FASTA file to trim both read1 and read2 (if PE) by all the sequences in this FASTA file
 ```
