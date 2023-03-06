@@ -1,5 +1,6 @@
 #### [fastp](https://github.com/OpenGene/fastp#readme): A tool designed to provide fast all-in-one preprocessing for FastQ files. 
 version 0.20.1
+
 [paper](https://academic.oup.com/bioinformatics/article/34/17/i884/5093234)
 
 ### Review of the used options in the rules
