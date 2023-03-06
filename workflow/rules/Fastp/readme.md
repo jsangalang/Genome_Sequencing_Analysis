@@ -3,19 +3,19 @@ version 0.20.1
 
 ### Review of the used options in the rules
 
-- **-w, --thread** # worker thread number, default is 2
+- **-i, --in1; -I, --in2** # read1 and read2 input file name
 
-- **--dont_overwrite** # don't overwrite existing files.
-
-- **-z, --compression 9** # compression level for gzip output (1 ~ 9). 1 is fastest, 9 is smallest, default is 4. 
+- **-o, --out1; -O, --out2** # read1 and read2 output file name
 
 - **-j, --json** # the json format report file name (default string [=fastp.json])
 
 - **-h, --html** # the html format report file name (default string [=fastp.html])
 
-- **-i, --in1; -I, --in2** # read1 and read2 input file name
+- **-w, --thread** # worker thread number, default is 2
 
-- **-o, --out1; -O, --out2** # read1 and read2 output file name
+- **--dont_overwrite** # don't overwrite existing files.
+
+- **-z, --compression 9** # compression level for gzip output (1 ~ 9). 1 is fastest, 9 is smallest, default is 4. 
 
 - **--trim_poly_g** # force polyG tail trimming, by default trimming is automatically enabled for Illumina NextSeq/NovaSeq data
 
