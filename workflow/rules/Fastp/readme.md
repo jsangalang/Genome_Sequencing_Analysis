@@ -19,8 +19,7 @@ version 0.20.1
 
 - **-z, --compression 9** # compression level for gzip output (1 ~ 9). 1 is fastest, 9 is smallest, default is 4. 
 
-##### overlap-analysis-based trim method:  
-two assumptions:
+overlap-analysis-based trim method, two assumptions:
 1. the first is that only one adapter exists in the data
 2. the second is that adapter sequences exist only in the read tails. 
 
