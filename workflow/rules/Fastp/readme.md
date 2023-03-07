@@ -29,11 +29,11 @@ PolyG is a common issue observed in Illumina NextSeq and NovaSeq series, which a
 
 - **--trim_poly_g** # force polyG tail trimming, by default trimming is automatically enabled for Illumina NextSeq/NovaSeq data
 
-
-
 - **--trim_poly_x** # enable polyX trimming in 3' ends.
 
 - **-l, --length_required 25** # reads shorter than length_required will be discarded, default is 15.
+
+Some sequences, or even entire reads, can be overrepresented in FASTQ data. Analysis of these overrepresented sequences provides an overview of certain sequencing artifacts such as PCR over-duplication, polyG tails and adapter contamination. 
 
 - **-p, --overrepresentation_analysis** # enable overrepresented sequence analysis
 
