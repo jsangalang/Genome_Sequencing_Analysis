@@ -82,7 +82,7 @@ if TUMOR_ONLY != True:
     include: "rules/CNV_Facets/main.smk"
 
 #### BQSR ####
-include: "rules/BQSR/main.smk"
+include: "rules/BQSR/BQSR.smk"
 
 #### HaplotypeCaller ####
 include: "rules/HaplotypeCaller/main.smk"
