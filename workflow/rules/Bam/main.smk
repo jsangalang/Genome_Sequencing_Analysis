@@ -1,7 +1,3 @@
-if config["pipeline"]["PAIRED"]:
-    include: "paired.smk"
-else:
-    include: "single.smk"
-
+include: "map.smk"
 include: "bam.smk"
 
