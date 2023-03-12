@@ -21,14 +21,16 @@ SAMPLES = []
 
 ## Get all fastq
 FASTQ_SAMPLES = glob_wildcards("DNA_samples/{name}.fastq.gz")
+
+TSAMPLE = []
+NSAMPLE = []
+
 MUTECT2_SAMPLES = []
 MUTECT2_FOR_PON_SAMPLES = []
 FACETS_SAMPLES = []
 CNV_FACETS_SAMPLES = []
 ONCOTATOR_SAMPLES = []
 ONCOTATOR_EXOM_SAMPLES = []
-TSAMPLE = []
-NSAMPLE = []
 TUMOR_ONLY = False
 
 if os.path.isfile("variant_call_list.tsv") :
