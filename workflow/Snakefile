@@ -74,7 +74,7 @@ include: "rules/Fastp/main.smk"
 include: "rules/Bam/main.smk"
 
 #### Fast QC ####
-include: "rules/Fastqc/main.smk"
+include: "rules/Fastqc/fastqc.smk"
 
 #### Facets ####
 include: "rules/Facets/main.smk"
