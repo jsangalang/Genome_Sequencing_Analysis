@@ -123,8 +123,8 @@ rule indexbam_after_recal:
 rule base_recalibrator_pass2:
     input:
         index = config["GENOME_FASTA"],
-        bam = "bam/{sample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"]=="True" else "bam/{sample}.recal.bam",
-        bai = "bam/{sample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"]=="True" else "bam/{sample}.recal.bam.bai",
+        bam = "bam/{sample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"] == True else "bam/{sample}.recal.bam",
+        bai = "bam/{sample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"] == True else "bam/{sample}.recal.bam.bai",
         GNOMAD_REF = config["GNOMAD_REF"]
     output:
         "BQSR/{sample}_BQSR_pass2.table"
