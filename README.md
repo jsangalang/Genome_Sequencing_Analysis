@@ -11,9 +11,9 @@ $ git clone https://github.com/jinxin-wang/Genome_Sequencing_Analysis.git
 ```
 - Step 1. create conda envirements 
 ```
-$ conda env create -f META_PRISM_conda_env.txt
-$ conda env create -f Mouse_env.txt
-$ conda env create -f pipeline_GATK_2.1.4_conda_env.txt
+$ conda env create -f META_PRISM_conda_env.txt -n META_PRISM
+$ conda env create -f Mouse_env.txt -n Mouse
+$ conda env create -f pipeline_GATK_2.1.4_conda_env.txt -n pipeline_GATK_2.1.4_V2
 ```
 - Step 2. deploy workflow
 ```
