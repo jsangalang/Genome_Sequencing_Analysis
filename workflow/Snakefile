@@ -92,7 +92,9 @@ include: "rules/Msodepth/main.smk"
 include: "rules/Flagstat/main.smk"
 
 #### Mutect2 ####
-include: "rules/Mutect2/Std/main.smk"
-include: "rules/Mutect2/Pon/main.smk"
-include: "rules/Mutect2/TumorOnly/main.smk"
-include: "rules/Mutect2/TumorOnlyPon/main.smk"
+if TUMOR_ONLY == True:
+    include: "rules/Mutect2/TumorOnly/main.smk"
+    include: "rules/Mutect2/TumorOnlyPon/main.smk"
+else: 
+    include: "rules/Mutect2/Std/main.smk"
+    include: "rules/Mutect2/Pon/main.smk"
