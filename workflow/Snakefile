@@ -107,9 +107,48 @@ include: "rules/Msodepth/msodepth.smk"
 include: "rules/Flagstat/flagstat.smk"
 
 #### Mutect2 ####
+include: "rules/Mutect2/Common/collectSeqAM.smk"
+include: "rules/Mutect2/Common/estiContamination.smk"
+
 if TUMOR_ONLY == False:
-    include: "rules/Mutect2/Std/main.smk"
-    include: "rules/Mutect2/Pon/main.smk"
+    ## Tumor vs Normal
+    include: "rules/Mutect2/Std/mutect2.smk"
+    include: "rules/Mutect2/Std/filterVC.smk"
+    include: "rules/Mutect2/Std/filterOB.smk"
+    
+    if config["samples"] == "humain":
+        include: "rules/Mutect2/Std/Split/oncotator.smk"
+        include: "rules/Mutect2/Std/Exom/oncotator.smk"
+    else:
+        include: "rules/Mutect2/Std/Annovar/annovar.smk"
+    
+    ## Tumor vs Normal with panel of normals (PON)
+    include: "rules/Mutect2/Pon/mutect2.smk"
+    include: "rules/Mutect2/Pon/filterVC.smk"
+    include: "rules/Mutect2/Pon/filterOB.smk"
+
+    if config["samples"] == "humain":
+        include: "rules/Mutect2/Pon/Split/oncotator.smk"
+        include: "rules/Mutect2/Pon/Exom/oncotator.smk"
 else: 
-    include: "rules/Mutect2/TumorOnly/main.smk"
-    include: "rules/Mutect2/TumorOnlyPon/main.smk"
+    ## Tumor Only
+    include: "rules/Mutect2/TumorOnly/mutect2.smk"
+    include: "rules/Mutect2/TumorOnly/filterMC.smk"
+    include: "rules/Mutect2/TumorOnly/filterOB.smk"
+
+    if config["samples"] == "humain":
+        include: "rules/Mutect2/TumorOnly/Split/oncotator.smk"
+        include: "rules/Mutect2/TumorOnly/Exom/oncotator.smk"
+    else:
+        include: "rules/Mutect2/TumorOnly/Annovar/annovar.smk"
+    
+    ## Tumor Only with panel of normals (PON)
+    include: "rules/Mutect2/TumorOnlyPon/mutect2.smk"
+    include: "rules/Mutect2/TumorOnlyPon/filterVC.smk"
+    include: "rules/Mutect2/TumorOnlyPon/filterOB.smk"
+
+    if config["samples"] == "humain":
+        include: "rules/Mutect2/TumorOnlyPon/Split/oncotator.smk"
+        include: "rules/Mutect2/TumorOnlyPon/Exom/oncotator.smk"
+
+
