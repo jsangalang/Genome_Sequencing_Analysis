@@ -1,5 +1,7 @@
 import os
 
+configfile: "workflow/config/config.json"
+
 if config["TARGET_INTERVAL"]!="":
     TARGET_INTERVAL_GATK = " -L " + config["TARGET_INTERVAL"]
     TARGET_INTERVAL_BQSR = TARGET_INTERVAL_GATK
@@ -66,45 +68,25 @@ include: "rules/Fastp/main.smk"
 include: "rules/Bam/main.smk"
 
 #### Fast QC ####
-if config["tools"]["fastqc"]:
-    include: "rules/Fastqc/main.smk"
+include: "rules/Fastqc/main.smk"
 
 #### Facets ####
-if config["tools"]["facets"]:
-    include: "rules/Facets/main.smk"
-
-if config["tools"]["cnv_facets"]:
-    include: "rules/CNV_Facets/main.smk"
+include: "rules/Facets/main.smk"
+include: "rules/CNV_Facets/main.smk"
 
 #### BQSR ####
-if config["tools"]["bqsr"]:
-    include: "rules/BQSR/main.smk"
+include: "rules/BQSR/main.smk"
 
 #### HaplotypeCaller ####
-if config["tools"]["haplotype"]:
-    include: "rules/HaplotypeCaller/main.smk"
+include: "rules/HaplotypeCaller/main.smk"
 
 #### Mapping QC ####
-if config["tools"]["hsmetrics"]:
-    include: "rules/HsMetrics/main.smk"
-
-if config["tools"]["mosdepth"]:
-    include: "rules/Msodepth/main.smk"
-
-if config["tools"]["flagstat"]:
-    include: "rules/Flagstat/main.smk"
+include: "rules/HsMetrics/main.smk"
+include: "rules/Msodepth/main.smk"
+include: "rules/Flagstat/main.smk"
 
 #### Mutect2 ####
-if config["tools"]["mutect2"]["samples"]:
-    include: "rules/Mutect2/Std/main.smk"
-
-if config["tools"]["mutect2_pon"]["samples"]:
-    include: "rules/Mutect2/Pon/main.smk"
-
-if config["tools"]["mutect2_tumor_only"]["samples"]:
-    include: "rules/Mutect2/TumorOnly/main.smk"
-
-if config["tools"]["mutect2_tumor_only_pon"]["samples"]:
-    include: "rules/Mutect2/TumorOnlyPon/main.smk"
-
-
+include: "rules/Mutect2/Std/main.smk"
+include: "rules/Mutect2/Pon/main.smk"
+include: "rules/Mutect2/TumorOnly/main.smk"
+include: "rules/Mutect2/TumorOnlyPon/main.smk"
