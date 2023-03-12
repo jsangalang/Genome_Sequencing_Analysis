@@ -53,17 +53,17 @@ else:
         
 rule all:
     input:
-        expand('bam/{sample}.nodup.recal.bam', sample =  NSAMPLE + TSAMPLE),
         expand('fastq_QC_raw/{fastq_sample}_fastqc.html', fastq_sample = FASTQ_SAMPLES.name),
         expand('fastq_QC_clean/{fastq_sample}_fastqc.html', fastq_sample =  FASTQ_SAMPLES.name),
+        expand('bam/{sample}.nodup.recal.bam', sample =  NSAMPLE + TSAMPLE),
+        expand("BQSR/{sample}_BQSR_report.pdf", sample = TSAMPLE + NSAMPLE),
+        expand("annovar/{sample}.avinput", sample = NSAMPLE + TSAMPLE ),
         expand(FACETS_SAMPLES),
         expand(CNV_FACETS_SAMPLES),
         expand('mapping_QC/HsMetrics/{sample}_HsMetrics.tsv', sample = TSAMPLE + NSAMPLE),
         expand("mapping_QC/flagstat/{sample}_flagstat.txt",   sample = TSAMPLE + NSAMPLE),
         expand("mapping_QC/mosdepth/{sample}.mosdepth.global.dist.txt", sample = TSAMPLE + NSAMPLE),
-        expand("BQSR/{sample}_BQSR_report.pdf", sample = TSAMPLE + NSAMPLE),
         # expand("haplotype_caller/{sample}_germline_variants.vcf.gz", sample = NSAMPLE),
-        expand("annovar/{sample}.avinput", sample = NSAMPLE + TSAMPLE ),
         expand(MUTECT2_SAMPLES),
         expand(ONCOTATOR_SAMPLES),
         expand(ONCOTATOR_EXOM_SAMPLES),
@@ -73,8 +73,7 @@ rule all:
 #### Fast QC ####
 include: "rules/Fastqc/fastqc.smk"
 
-#### bam files ####
-## clean fastq files with fastp
+#### clean fastq files with fastp ####
 include: "rules/Fastp/fastp.smk"
 
 ## map single-end or paired-end DNA sample, 
