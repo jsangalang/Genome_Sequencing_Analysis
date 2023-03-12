@@ -69,36 +69,48 @@ rule all:
         expand(ONCOTATOR_EXOM_SAMPLES),
         expand(MUTECT2_FOR_PON_SAMPLES),
 
-#### bam files ####
-include: "rules/Fastp/fastp.smk"
-include: "rules/Bam/main.smk"
 
 #### Fast QC ####
 include: "rules/Fastqc/fastqc.smk"
 
-#### Facets ####
-if TUMOR_ONLY != True: 
-    include: "rules/Facets/main.smk"
-    include: "rules/CNV_Facets/main.smk"
+#### bam files ####
+## clean fastq files with fastp
+include: "rules/Fastp/fastp.smk"
 
-#### BQSR ####
+## map single-end or paired-end DNA sample, 
+include: "rules/Map/map.smk"
+
+#### Base Quality Score Recalibration ([BQSR](https://gatk.broadinstitute.org/hc/en-us/articles/360035890531-Base-Quality-Score-Recalibration-BQSR-)) ####
+## remove duplicated readswith, then do BQSR
 include: "rules/BQSR/BQSR.smk"
 
-#### HaplotypeCaller ####
-include: "rules/HaplotypeCaller/main.smk"
+#### Facets ####
+if TUMOR_ONLY == False: 
+    include: "rules/Facets/facets.smk"
+    include: "rules/CNV_Facets/cnvFacets.smk"
+
+#### Annovar ####
+if TUMOR_ONLY == False: 
+    ## Call germline SNPs and indels via local re-assembly of haplotypes
+    include: "rules/Annovar/haplotypeCaller.smk"
+    ## Annovar on Haplotype caller 
+    include: "rules/Annovar/annovar.smk"
 
 #### Mapping QC ####
+
 ## mapping stats, with GATK CollectHsMetrics
 include: "rules/HsMetrics/hsMetrics.smk"
+
 ## mapping coverage 
 include: "rules/Msodepth/msodepth.smk"
+
 ## check mapping metrics with samtools flagstat
 include: "rules/Flagstat/flagstat.smk"
 
 #### Mutect2 ####
-if TUMOR_ONLY == True:
-    include: "rules/Mutect2/TumorOnly/main.smk"
-    include: "rules/Mutect2/TumorOnlyPon/main.smk"
-else: 
+if TUMOR_ONLY == False:
     include: "rules/Mutect2/Std/main.smk"
     include: "rules/Mutect2/Pon/main.smk"
+else: 
+    include: "rules/Mutect2/TumorOnly/main.smk"
+    include: "rules/Mutect2/TumorOnlyPon/main.smk"
