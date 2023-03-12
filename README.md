@@ -1,6 +1,6 @@
 # Snakemake workflow: `<name>`
 
-[![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.github.io)
+[![Snakemake](https://img.shields.io/badge/snakemake-=5.23.0-brightgreen.svg)](https://snakemake.github.io)
 
 A Snakemake workflow for humain/mouse WGS/WES analysis. 
 
