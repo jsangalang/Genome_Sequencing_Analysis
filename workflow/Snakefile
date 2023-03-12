@@ -77,8 +77,9 @@ include: "rules/Bam/main.smk"
 include: "rules/Fastqc/fastqc.smk"
 
 #### Facets ####
-include: "rules/Facets/main.smk"
-include: "rules/CNV_Facets/main.smk"
+if TUMOR_ONLY != True: 
+    include: "rules/Facets/main.smk"
+    include: "rules/CNV_Facets/main.smk"
 
 #### BQSR ####
 include: "rules/BQSR/main.smk"
@@ -87,9 +88,12 @@ include: "rules/BQSR/main.smk"
 include: "rules/HaplotypeCaller/main.smk"
 
 #### Mapping QC ####
-include: "rules/HsMetrics/main.smk"
-include: "rules/Msodepth/main.smk"
-include: "rules/Flagstat/main.smk"
+## mapping stats, with GATK CollectHsMetrics
+include: "rules/HsMetrics/hsMetrics.smk"
+## mapping coverage 
+include: "rules/Msodepth/msodepth.smk"
+## check mapping metrics with samtools flagstat
+include: "rules/Flagstat/flagstat.smk"
 
 #### Mutect2 ####
 if TUMOR_ONLY == True:
