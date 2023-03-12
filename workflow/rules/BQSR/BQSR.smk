@@ -28,7 +28,7 @@ rule indexbam_before_recal:
         samtools = config["SAMTOOLS"]["APP"]
     threads : 8
     resources:
-        mem_mb = 30960
+        mem_mb = 40960
     log:
         "logs/bam/{sample}.bam.bai.log"
     shell:
