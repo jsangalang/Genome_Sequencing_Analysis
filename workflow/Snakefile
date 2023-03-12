@@ -70,7 +70,7 @@ rule all:
         expand(MUTECT2_FOR_PON_SAMPLES),
 
 #### bam files ####
-include: "rules/Fastp/main.smk"
+include: "rules/Fastp/fastp.smk"
 include: "rules/Bam/main.smk"
 
 #### Fast QC ####
