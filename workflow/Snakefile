@@ -120,6 +120,7 @@ if TUMOR_ONLY == False:
         include: "rules/Mutect2/Std/Split/oncotator.smk"
         include: "rules/Mutect2/Std/Exom/oncotator.smk"
     else:
+        ## mouse samples
         include: "rules/Mutect2/Std/Annovar/annovar.smk"
     
     ## Tumor vs Normal with panel of normals (PON)
@@ -140,6 +141,7 @@ else:
         include: "rules/Mutect2/TumorOnly/Split/oncotator.smk"
         include: "rules/Mutect2/TumorOnly/Exom/oncotator.smk"
     else:
+        ## mouse samples
         include: "rules/Mutect2/TumorOnly/Annovar/annovar.smk"
     
     ## Tumor Only with panel of normals (PON)
