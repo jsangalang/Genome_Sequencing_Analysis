@@ -1,4 +1,4 @@
-# Snakemake workflow:  WGS/WES analysis pipeline for humain/mouse samples
+# Snakemake:  WGS/WES analysis pipeline for humain/mouse samples
 
 [![Snakemake](https://img.shields.io/badge/snakemake-=5.23.0-brightgreen.svg)](https://snakemake.github.io)
 
