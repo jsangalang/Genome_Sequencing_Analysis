@@ -11,8 +11,8 @@ if config["paired"] = False:
             "logs/fastp/{sample}_fastp.html.log"
         params:
             queue = "mediumq",
-            fastp = config["APP_FASTP"],
-            adapters = config["FASTP_ADAPTERS"]
+            fastp = config["FASTP"]["app"],
+            adapters = config["FASTP"]["ADAPTERS"]
         threads : 16
         resources:
             mem_mb = 51200
@@ -35,8 +35,8 @@ elif config["paired"] = True:
             "logs/fastp/{sample}_fastp.html.log"
         params:
             queue = "longq",
-            fastp = config["APP_FASTP"],
-            adapters = config["FASTP_ADAPTERS"]
+            fastp = config["FASTP"]["app"],
+            adapters = config["FASTP"]["ADAPTERS"]
         threads : 16
         resources:
             mem_mb = 51200
