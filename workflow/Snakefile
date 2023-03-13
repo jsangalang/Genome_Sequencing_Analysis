@@ -135,30 +135,27 @@ if TUMOR_ONLY == False:
 
     if config["samples"] == "humain":
         include: "rules/Mutect2/Pon/Split/oncotator.smk"
+        
         if config["seq_type"] == "WGS":
             include: "rules/Mutect2/Pon/Exom/oncotator.smk"
 
 ## Tumor Only mode
 elif TUMOR_ONLY == True: 
     include: "rules/Mutect2/TumorOnly/mutect2.smk"
-    include: "rules/Mutect2/TumorOnly/filterMC.smk"
-    include: "rules/Mutect2/TumorOnly/filterOB.smk"
 
     if config["samples"] == "humain":
         include: "rules/Mutect2/TumorOnly/Split/oncotator.smk"
         if config["seq_type"] == "WGS":
             include: "rules/Mutect2/TumorOnly/Exom/oncotator.smk"
+    
     elif config["samples"] == "mouse":
         include: "rules/Mutect2/TumorOnly/Annovar/annovar.smk"
     
     ## Tumor Only with panel of normals (PON)
     include: "rules/Mutect2/TumorOnlyPon/mutect2.smk"
-    include: "rules/Mutect2/TumorOnlyPon/filterVC.smk"
-    include: "rules/Mutect2/TumorOnlyPon/filterOB.smk"
 
     if config["samples"] == "humain":
         include: "rules/Mutect2/TumorOnlyPon/Split/oncotator.smk"
+        
         if config["seq_type"] == "WGS":
             include: "rules/Mutect2/TumorOnlyPon/Exom/oncotator.smk"
-
-
