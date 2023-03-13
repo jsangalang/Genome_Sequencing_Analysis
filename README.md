@@ -29,7 +29,7 @@ $ ln -s /datadir/* .
 ```
 - Step 3. configure workflow
 If there are only tumor samples, then the pipeline will run automatically in tumor only mode. 
-If there are both tumor samples and normal samples, then you need create a file called variant_call_list.tsv in the project directory. 
+If there are both tumor samples and normal samples, then you need create a file called variant_call_list.tsv in the project directory. The first column is for the tumor samples, and second column is for the normal samples. Each is a tumor vs normal pair. The seperator is tab. I create a script to generate the table automatically, but anyway you need to verify the generated table before start the pipeline. 
 ```
 $ emacs -nw run.sh
 ```
