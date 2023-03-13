@@ -8,8 +8,8 @@ rule facets_snp_pilleup:
         "logs/facets/{tsample}_Vs_{nsample}_facets.log"
     params:
         queue = "mediumq",
-        snp_pileup = config["facet_snp_pileup"]["app"]
-        gnomad_ref = config["gatk"][config["samples"]]["gnomad_ref"],
+        snp_pileup = config["facet_snp_pileup"]["app"],
+        gnomad_ref = config["facet_snp_pileup"][config["samples"]]["facet_snp_pileup"],
     threads : 1
     resources:
         mem_mb = 10240
@@ -27,7 +27,7 @@ rule facet_graph:
         "logs/facets/{tsample}_Vs_{nsample}_facets_graph.log"
     params:
         queue = "mediumq",
-        R = config["R"]["app"]
+        R = config["R"]["app"],
         facet_graph = config["R"]["scripts"]["facet_graph"],
     threads : 1
     resources:
