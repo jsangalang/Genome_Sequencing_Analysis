@@ -23,8 +23,13 @@ $ cd projectname
 $ ln -s /workflowpath/workflow .
 $ ln -s /workflowpath/conf .
 $ cp /workflowpath/run.sh .
+$ mkdir -p DNA_samples
+$ cd DNA_samples
+$ ln -s /datadir/* .
 ```
 - Step 3. configure workflow
+If there are only tumor samples, then the pipeline will run automatically in tumor only mode. 
+If there are both tumor samples and normal samples, then you need create a file called variant_call_list.tsv in the project directory. 
 ```
 $ emacs -nw run.sh
 ```
