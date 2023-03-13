@@ -1,7 +1,7 @@
 {
     "samples" : "humain",
     "seq_type": "WGS",
-    "paired": True
+    "paired": True,
     "remove_duplicates": True,
 
     "fastp": {
