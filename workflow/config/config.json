@@ -55,12 +55,15 @@
             "genome_fasta": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/bwa_mm9_from_sanger/NCBIM37_um.fa",
             "gnomad_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/genome_project_snp/mgp_V2_snp_indel_mm9.vcf.gz",
             "mutect_filter_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/genome_project_snp/mgp_V2_snp_indel_mm9.vcf.gz",
-
             "WGS": {
                 "mutect_interval_dir": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/interval_mutect2",
+                "hsmetrics_interval": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
+                "hsmetrics_bait"    : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
             },
             "WES": {
                 "mutect_interval_dir": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/interval_mutect2",
+                "hsmetrics_interval": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
+                "hsmetrics_bait"    : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
             },
 	},
     },
@@ -164,12 +167,10 @@
 
     "Mouse_EXOM_BED"                                          : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.bed",
     "Mouse_GENOME_2BIT"                                       : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/bwa_mm9_from_sanger/NCBIM37_um.fa",
-    "Mouse_HSMETRICS_INTERVAL"                                : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
-    "Mouse_HSMETRICS_BAIT"                                    : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
     "Mouse_MAX_ALT_ALLELES_IN_NORMAL_COUNT"                   : "0",
     "Mouse_ONCOGENES_DB"                                      : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_oncogene_IDs.tsv",
     "Mouse_ONCOTATOR_ENV"                                     : "/data/ipadioleau/opt/oncotator-1.9.9.0/bin/activate",
-    "Mouse_REMOVE_DUPLICATES"                                 : "True",
+
     "Mouse_STAR_INDEX"                                        : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/STAR_2_6_index/",
     "Mouse_TUMOR_SUPRESSOR_DB"                                : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_tumor_supressor_genes_IDs.tsv"
 
