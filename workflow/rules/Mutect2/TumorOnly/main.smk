@@ -5,7 +5,7 @@ include: "../Common/estiContamination.smk"
 include: "filterOB.smk"
 
 if config["pipeline"]["SEQ"] == "humain":
-    include: "Split/main.smk"
-    include: "Exom/main.smk"
+    include: "Split/oncotator.smk"
+    include: "Exom/oncotator.smk"
 else:
-    include: "Annovar/main.smk"
+    include: "Annovar/annovar.smk"

@@ -1,27 +1,27 @@
 ## Run somatic variant caller from GATK on all samples
 rule HaplotypeCaller:
     input:
-        index = config["GENOME_FASTA"],
-        interval = config["MUTECT_INTERVAL_DIR"] + "/{interval}.bed",
-        bam = "bam/{sample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"]=="True" else "bam/{sample}.recal.bam",
-        bai = "bam/{sample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"]=="True" else "bam/{sample}.recal.bam.bai",
-        GNOMAD_REF = config["GNOMAD_REF"]
+        bam = "bam/{sample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{sample}.recal.bam",
+        bai = "bam/{sample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{sample}.recal.bam.bai",
     output:
         VCF = "haplotype_caller_tmp/{sample}_germline_variants_ON_{interval}.vcf.gz"
     params:
         queue = "mediumq",
-        gatk = config["APP_GATK"]
+        gatk = config["gatk"]["app"],
+        index = config["gatk"][config["samples"]]["genome_fasta"],
+        gnomad_ref = config["gatk"][config["samples"]]["gnomad_ref"],
+        interval = config["gatk"][config["samples"]][config["seq_type"]]["mutect_interval_dir"] + "/{interval}.bed",
     log:
         "logs/haplotype_caller_tmp/{sample}_germline_variants_ON_{interval}.vcf.log"
-    threads : 16
+    threads : 4
     resources:
         mem_mb = 51200
     shell:
         "{params.gatk} --java-options \"-Xmx40g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" HaplotypeCaller"
-        " --reference {input.index} "
-        " -L {input.interval}"
+        " --reference {params.index} "
+        " -L {params.interval}"
         " -I {input.bam}"
-        " --comp {input.GNOMAD_REF}"
+        " --comp {params.gnomad_ref}"
         " --standard-min-confidence-threshold-for-calling 20"
         " -O {output.VCF} 2> {log}"
  
@@ -34,10 +34,10 @@ rule concatenate_haplotypecaller:
          vcf_liste = "haplotype_tmp_list/{nsample}_haplotype_tmp_list.txt"
     params:
         queue = "shortq",
-        gatk = config["APP_GATK"]
+        gatk = config["gatk"]["app"]
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 20480
     log:
         "logs/haplotype_caller/{nsample}_germline_variants.vcf.log"
     shell :
@@ -61,12 +61,12 @@ rule HaplotypeCaller_filtering:
         VCF_FILTERED_TBI = "haplotype_caller_filtered/{sample}_germline_variants_filtered.vcf.gz.tbi",
     params:
         queue = "shortq",
-        gatk = config["APP_GATK"]
+        gatk = config["gatk"]["app"]
     log:
         "logs/haplotype_caller_filtered/{sample}_germline_variants_filtered.vcf.log"
     threads : 1
     resources:
-        mem_mb = 20000
+        mem_mb = 20480
     shell:
         "{params.gatk} --java-options \" -Xmx10g  -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" SelectVariants -V {input.VCF} -select-type SNP -O {output.VCF_SNP} 2>> {log} &&"
         " {params.gatk} --java-options \" -Xmx10g  -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" SelectVariants -V {input.VCF} -select-type MIXED -select-type INDEL -O {output.VCF_INDEL} 2>> {log} &&"

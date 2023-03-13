@@ -1,21 +1,19 @@
 import os
 
+## load json configuration file
 configfile: "workflow/config/config.json"
 
-if config["TARGET_INTERVAL"]!="":
-    TARGET_INTERVAL_GATK = " -L " + config["TARGET_INTERVAL"]
-    TARGET_INTERVAL_BQSR = TARGET_INTERVAL_GATK
+## Tumor vs Normal mode by default
+TUMOR_ONLY = False
 
-else :
-    TARGET_INTERVAL_GATK = ""
-    TARGET_INTERVAL_BQSR = " -L 1 "
+## Note 1: default values for target interval
+##   TARGET_INTERVAL_GATK = ""
+##   TARGET_INTERVAL_BQSR = " -L 1 "
 
-if config["MUTECT_INTERVAL_DIR"][-1] == '/':
-    config["MUTECT_INTERVAL_DIR"] = config["MUTECT_INTERVAL_DIR"][:-1]
+## Note 2: config["MUTECT_INTERVAL_DIR"] should not be terminated by "/"
 
+## wildcards for mutect intervals
 mutect_intervals, = glob_wildcards(config["MUTECT_INTERVAL_DIR"] + "/{interval}.bed")
-
-## Collecting information on files to produce
 
 ## Get all fastq
 FASTQ_SAMPLES = glob_wildcards("DNA_samples/{name}.fastq.gz")
@@ -23,14 +21,15 @@ FASTQ_SAMPLES = glob_wildcards("DNA_samples/{name}.fastq.gz")
 TSAMPLE = []
 NSAMPLE = []
 
+## Collecting information on files to produce
 MUTECT2_SAMPLES = []
 MUTECT2_FOR_PON_SAMPLES = []
+
 FACETS_SAMPLES = []
 CNV_FACETS_SAMPLES = []
+
 ONCOTATOR_SAMPLES = []
 ONCOTATOR_EXOM_SAMPLES = []
-
-TUMOR_ONLY = False
 
 if os.path.isfile("variant_call_list.tsv") :
     with open("variant_call_list.tsv",'r')  as SAMPLE_INPUT_LIST: 
@@ -39,16 +38,22 @@ if os.path.isfile("variant_call_list.tsv") :
             if len(tmp)==2:
                 tsample = tmp[0]
                 nsample = tmp[1]
+
                 TSAMPLE.append(tsample)
                 NSAMPLE.append(nsample)
+
                 FACETS_SAMPLES.append("facets/" + tsample + "_Vs_" + nsample + "_facets_cval500.pdf")
                 CNV_FACETS_SAMPLES.append("cnv_facets/" + tsample + "_Vs_" + nsample + ".vcf.gz")
-                ONCOTATOR_SAMPLES.append("oncotator_TvN_tsv_COSMIC/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC.tsv")
-                ONCOTATOR_EXOM_SAMPLES.append("oncotator_TvN_tsv_COSMIC_exom/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC_exom.tsv")
+
                 MUTECT2_SAMPLES.append("Mutect2_TvN/" + tsample + "_Vs_" + nsample + "_twicefiltered_TvN.vcf.gz")
+                if config["samples"] == "humain":
+                    ONCOTATOR_SAMPLES.append("oncotator_TvN_tsv_COSMIC/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC.tsv")
+                    if config["seq_type"] == "WES":
+                        ONCOTATOR_EXOM_SAMPLES.append("oncotator_TvN_tsv_COSMIC_exom/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC_exom.tsv")
 
 else: 
     TUMOR_ONLY = True
+    TSAMPLE,PAIRED = glob_wildcards("DNA_samples/{tsample,.+}_{paired,[012]}.fastq.gz")
         
 rule all:
     input:
@@ -69,78 +74,81 @@ rule all:
         expand(MUTECT2_FOR_PON_SAMPLES),
 
 
-#### Fast QC ####
-include: "rules/Fastqc/fastqc.smk"
-
-#### clean fastq files with fastp ####
+######## clean fastq files with fastp ########
 include: "rules/Fastp/fastp.smk"
 
-## map single-end or paired-end DNA sample, 
-include: "rules/Map/map.smk"
+######## Fast QC ########
+include: "rules/Fastqc/fastqc.smk"
 
-#### Base Quality Score Recalibration ([BQSR](https://gatk.broadinstitute.org/hc/en-us/articles/360035890531-Base-Quality-Score-Recalibration-BQSR-)) ####
+######## align single-end or paired-end DNA samples with bwa ########
+include: "rules/Align/bwa.smk"
+
+######## [GATK - BQSR] Base Quality Score Recalibration ########
+## https://gatk.broadinstitute.org/hc/en-us/articles/360035890531-Base-Quality-Score-Recalibration-BQSR-
 ## remove duplicated readswith, then do BQSR
 include: "rules/BQSR/BQSR.smk"
 
-#### Facets ####
+######## Facets ########
 if TUMOR_ONLY == False: 
     include: "rules/Facets/facets.smk"
-    include: "rules/CNV_Facets/cnvFacets.smk"
+    include: "rules/Facets/cnvFacets.smk"
 
-#### Annovar ####
-if TUMOR_ONLY == False: 
+######## Annovar ########
+if TUMOR_ONLY == False:
     ## Call germline SNPs and indels via local re-assembly of haplotypes
     include: "rules/Annovar/haplotypeCaller.smk"
     ## Annovar on Haplotype caller 
     include: "rules/Annovar/annovar.smk"
 
-#### Mapping QC ####
+######## Mapping QC ########
 
-## mapping stats, with GATK CollectHsMetrics
+## check mapping stats, with GATK CollectHsMetrics
 include: "rules/HsMetrics/hsMetrics.smk"
 
-## mapping coverage 
+## check mapping coverage with msodepth
 include: "rules/Msodepth/msodepth.smk"
 
 ## check mapping metrics with samtools flagstat
 include: "rules/Flagstat/flagstat.smk"
 
-#### Mutect2 ####
+######## Annotate on Mutect2 ########
+
+## common rules for mutect2
 include: "rules/Mutect2/Common/collectSeqAM.smk"
 include: "rules/Mutect2/Common/estiContamination.smk"
 
+## Tumor vs Normal mode
 if TUMOR_ONLY == False:
-    ## Tumor vs Normal
     include: "rules/Mutect2/Std/mutect2.smk"
-    include: "rules/Mutect2/Std/filterVC.smk"
-    include: "rules/Mutect2/Std/filterOB.smk"
     
     if config["samples"] == "humain":
         include: "rules/Mutect2/Std/Split/oncotator.smk"
-        include: "rules/Mutect2/Std/Exom/oncotator.smk"
-    else:
-        ## mouse samples
+
+        if config["seq_type"] == "WGS":
+            include: "rules/Mutect2/Std/Exom/oncotator.smk"
+
+    elif config["samples"] == "mouse":
         include: "rules/Mutect2/Std/Annovar/annovar.smk"
     
     ## Tumor vs Normal with panel of normals (PON)
     include: "rules/Mutect2/Pon/mutect2.smk"
-    include: "rules/Mutect2/Pon/filterVC.smk"
-    include: "rules/Mutect2/Pon/filterOB.smk"
 
     if config["samples"] == "humain":
         include: "rules/Mutect2/Pon/Split/oncotator.smk"
-        include: "rules/Mutect2/Pon/Exom/oncotator.smk"
-else: 
-    ## Tumor Only
+        if config["seq_type"] == "WGS":
+            include: "rules/Mutect2/Pon/Exom/oncotator.smk"
+
+## Tumor Only mode
+elif TUMOR_ONLY == True: 
     include: "rules/Mutect2/TumorOnly/mutect2.smk"
     include: "rules/Mutect2/TumorOnly/filterMC.smk"
     include: "rules/Mutect2/TumorOnly/filterOB.smk"
 
     if config["samples"] == "humain":
         include: "rules/Mutect2/TumorOnly/Split/oncotator.smk"
-        include: "rules/Mutect2/TumorOnly/Exom/oncotator.smk"
-    else:
-        ## mouse samples
+        if config["seq_type"] == "WGS":
+            include: "rules/Mutect2/TumorOnly/Exom/oncotator.smk"
+    elif config["samples"] == "mouse":
         include: "rules/Mutect2/TumorOnly/Annovar/annovar.smk"
     
     ## Tumor Only with panel of normals (PON)
@@ -150,6 +158,7 @@ else:
 
     if config["samples"] == "humain":
         include: "rules/Mutect2/TumorOnlyPon/Split/oncotator.smk"
-        include: "rules/Mutect2/TumorOnlyPon/Exom/oncotator.smk"
+        if config["seq_type"] == "WGS":
+            include: "rules/Mutect2/TumorOnlyPon/Exom/oncotator.smk"
 
 

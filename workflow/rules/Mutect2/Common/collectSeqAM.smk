@@ -1,7 +1,7 @@
 ## A rule to collect sequencing artifact metrics
 rule Collect_Sequencing_Artifact_Metrics:
     input :
-        tumor_bam = "bam/{tsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam",
+        tumor_bam = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
         index = config["GENOME_FASTA"]
     output:
         "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.bait_bias_detail_metrics.txt",
@@ -12,14 +12,14 @@ rule Collect_Sequencing_Artifact_Metrics:
     params:
         queue = "mediumq",
         output_prefix = "collect_Sequencing_Artifact_Metrics/{tsample}_artifact",
-        gatk = config["APP_GATK"]
+        gatk = config["gatk"]["app"]
     log:
         "logs/filter_Mutect2/{tsample}_artifact.log"
-    threads : 1
+    threads : 4
     resources:
-        mem_mb = 40000
+        mem_mb = 51200
     shell:
-        "{params.gatk} --java-options \"-Xmx40g  -Djava.io.tmpdir=/mnt/beegfs/scratch/tmp \" CollectSequencingArtifactMetrics"
+        "{params.gatk} --java-options \"-Xmx40g  -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" CollectSequencingArtifactMetrics"
         " -I {input.tumor_bam}"
         " --FILE_EXTENSION \".txt\""
         " -R {input.index}"

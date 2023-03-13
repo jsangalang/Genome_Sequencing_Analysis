@@ -8,10 +8,10 @@ rule get_variant_bed_pon:
         "logs/variant_bed_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.bed.txt"
     params:
         queue = "mediumq",
-        vcf2bed = config["APP_VCF2BED"] 
+        vcf2bed = config["vcf2bed"]["app"]
     threads : 1
     resources:
-        mem_mb = 5000
+        mem_mb = 10240
     shell:
         'zcat {input.Mutect2_vcf} | python2 {params.vcf2bed} - > {output.BED} 2> {log}'
 
@@ -19,40 +19,40 @@ rule get_variant_bed_pon:
 rule samtools_mpileup_pon:
     input:
         BED = "variant_bed_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp.bed",
-        GENOME_REF_FASTA = config["GENOME_FASTA"],
-        BAM = "bam/{tsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam",
-        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam.bai"
+        BAM = "bam/{tsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"] == True else "bam/{tsample}.recal.bam",
+        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"] == True else "bam/{tsample}.recal.bam.bai"
     output:
         PILEUP = "pileup_TvN/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.pileup.gz"
     log:
         "logs/pileup_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.pileup.txt"
     params:
         queue = "mediumq",
-        samtools = config["APP_SAMTOOLS"]
+        samtools = config["samtools"]["app"],
+        GENOME_REF_FASTA = config["gatk"][config["samples"]]["genome_fasta"],
     threads : 1
     resources:
-        mem_mb = 5000
+        mem_mb = 10240
     shell:
-        '{params.samtools} mpileup -a -B -l {input.BED} -f {input.GENOME_REF_FASTA} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
+        '{params.samtools} mpileup -a -B -l {input.BED} -f {params.GENOME_REF_FASTA} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
 
 ## A rule to split mutect2 results in pieces 
 rule split_Mutect2_pon:
     input:
         Mutect2_vcf = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz",
         vcf_index = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz.tbi",
-        interval = config["MUTECT_INTERVAL_DIR"] + "/{interval}.bed"
     output:
         interval_vcf_bcftools = temp("Mutect2_TvNp_oncotator_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}_bcftools.vcf.gz"),
         interval_vcf = temp("Mutect2_TvNp_oncotator_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.gz")
     params:
         queue = "shortq",
-        bcftools = config["APP_BCFTOOLS"],
-        reformat_script = config["APP_REFORMAT_MUTECT2"]
+        bcftools = config["bcftools"]["app"],
+        reformat = config["gatk"]["scripts"]["reformat_mutect2"],
+        interval = config["gatk"][config["samples"]][config["seq_type"]]["mutect_interval_dir"] + "/{interval}.bed"
     log:
         "logs/Mutect2_TvNp_oncotator_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.log"
     threads : 1
     resources:
-        mem_mb = 2000
+        mem_mb = 20480
     shell:
         '{params.bcftools} view -l 9 -R {input.interval} -o {output.interval_vcf_bcftools} {input.Mutect2_vcf} 2> {log} &&'
         ' python {params.reformat_script} {output.interval_vcf_bcftools} {output.interval_vcf} 2>> {log}'
@@ -60,22 +60,20 @@ rule split_Mutect2_pon:
 # A rule to annotate mutect2 tumor versus normal and panel of normal results with oncotator  
 rule oncotator_pon:
     input:
-        ONCOTATOR_DB = config["ONCOTATOR_DB"],
         interval_vcf = "Mutect2_TvNp_oncotator_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.gz"
     output:
         MAF = temp("oncotator_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_ON_{interval}_annotated_TvNp.TCGAMAF")
     params:
         queue = "mediumq",
-        #activate_oncotator = config["ONCOTATOR_ENV"],
-        oncotator = config["APP_ONCOTATOR"]
+        oncotator = config["oncotator"]["app"],
+        oncotator_db = config["oncotator"][config["samples"]]["DB"],
     log:
         "logs/oncotator_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_ON_{interval}_annotated_TvNp.TCGAMAF.log"
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 10240
     shell:
-        'oncotator --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={input.ONCOTATOR_DB} {input.interval_vcf} {output.MAF} hg19 2> {log}'
-        #'set +u; source {params.activate_oncotator}; set -u; oncotator --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={input.ONCOTATOR_DB} {input.interval_vcf} {output.MAF} hg19; deactivate'
+        '{params.oncotator} --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={params.oncotator_db} {input.interval_vcf} {output.MAF} hg19 2> {log}'
 
 # concatenate oncotator TvN_pon
 rule concatenate_oncotator_pon:

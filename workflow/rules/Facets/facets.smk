@@ -1,6 +1,5 @@
 rule facets_snp_pilleup:
     input:
-        GNOMAD_REF = config["GNOMAD_REF"],
         TUMOR_BAM = "bam/{tsample}.nodup.recal.bam",
         NORMAL_BAM = "bam/{nsample}.nodup.recal.bam"
     output:
@@ -9,12 +8,13 @@ rule facets_snp_pilleup:
         "logs/facets/{tsample}_Vs_{nsample}_facets.log"
     params:
         queue = "mediumq",
-        snp_pileup = config["APP_FACET_SNP_PILEUP"]
+        snp_pileup = config["facet_snp_pileup"]["app"]
+        gnomad_ref = config["gatk"][config["samples"]]["gnomad_ref"],
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 10240
     shell:
-        '{params.snp_pileup} -g --min-map-quality=55 --min-base-quality=20 --max-depth=200 --min-read-counts=15,15 {input.GNOMAD_REF} {output.CSV} {input.NORMAL_BAM} {input.TUMOR_BAM}'
+        '{params.snp_pileup} -g --min-map-quality=55 --min-base-quality=20 --max-depth=200 --min-read-counts=15,15 {params.gnomad_ref} {output.CSV} {input.NORMAL_BAM} {input.TUMOR_BAM}'
 		
 #A rule to draw facets graphs
 rule facet_graph:
@@ -27,10 +27,10 @@ rule facet_graph:
         "logs/facets/{tsample}_Vs_{nsample}_facets_graph.log"
     params:
         queue = "mediumq",
-        facet_graph = config["APP_FACET_GRAPH"],
-        Rscript = config["APP_RSCRIPT"]
+        R = config["R"]["app"]
+        facet_graph = config["R"]["scripts"]["facet_graph"],
     threads : 1
     resources:
-        mem_mb = 100000
+        mem_mb = 102400
     shell:
-        '{params.Rscript} {params.facet_graph} {input.CSV}'
+        '{params.R} {params.facet_graph} {input.CSV}'

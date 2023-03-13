@@ -9,7 +9,7 @@ rule annovar:
     params:
         queue = "mediumq",
         annovar = config["APP_ANNOVAR"],
-        annovar_db = config["ANNOVAR_DB"]
+        annovar_db = config["ANNOVAR"][config["samples"]]["DB"],
     threads : 4
     resources:
         mem_mb = 8000

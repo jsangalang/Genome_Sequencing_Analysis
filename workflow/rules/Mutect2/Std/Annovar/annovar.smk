@@ -7,13 +7,13 @@ rule annovar_on_mutect:
         vcf = "annovar_mutect2_TvN/{tsample}_Vs_{nsample}.mm9_multianno.vcf"
     params:
         queue = "mediumq",
-        annovar = config["APP_ANNOVAR"],
-        annovar_db = config["ANNOVAR_DB"]
-    threads : 4
+        annovar = config["annovar"]["app"],
+        annovar_db = config["annovar"][config["samples"]]["DB"]
+    threads : 8
     resources:
-        mem_mb = 20000
+        mem_mb = 20480
     log:
         "logs/annovar/{tsample}_Vs_{nsample}.log"
     shell :
-       "{params.annovar} {input.vcf} {params.annovar_db}  --thread 4 --maxgenethread 4 -buildver mm9 -out annovar_mutect2_TvN/{wildcards.tsample}_Vs_{wildcards.nsample} -remove -protocol refGene,snp128 -operation g,f -nastring . -vcfinput 2> {log}"
+       "{params.annovar} {input.vcf} {params.annovar_db}  --thread {threads} --maxgenethread 4 -buildver mm9 -out annovar_mutect2_TvN/{wildcards.tsample}_Vs_{wildcards.nsample} -remove -protocol refGene,snp128 -operation g,f -nastring . -vcfinput 2> {log}"
 

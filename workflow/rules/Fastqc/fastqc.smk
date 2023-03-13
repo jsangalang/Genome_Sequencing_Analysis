@@ -10,8 +10,8 @@ rule fastqc_raw:
         "logs/fastq_QC_raw/{fastq_sample}_fastqc.html.log"
     params:    
         queue = "shortq",
-        fastqc = config["FASTQC"]["APP"],
-        adapters = config["FASTQC"]["ADAPTERS"]
+        fastqc = config["fastqc"]["app"],
+        adapters = config["fastqc"]["adapters"]
     threads : 16
     resources:
         mem_mb = 51200
@@ -29,8 +29,8 @@ rule fastqc_clean:
         "logs/fastq_QC_clean/{sample}_fastqc.html.log"
     params:    
         queue = "shortq",
-        fastqc = config["FASTQC"]["APP"],
-        adapters = config["FASTQC"]["ADAPTERS"]
+        fastqc = config["fastqc"]["app"],
+        adapters = config["fastqc"]["adapters"]
     threads : 16
     resources:
         mem_mb = 51200

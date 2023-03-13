@@ -2,16 +2,96 @@
     "samples" : "humain",
     "seq_type": "WGS",
     "paired": True
+    "remove_duplicates": True,
 
-    "ANNOVAR": {
-        "app": "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/table_annovar.pl",
+    "fastp": {
+        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/fastp",
+        "adapters": "/mnt/beegfs/userdata/i_padioleau/genome_data/adapters_for_fastp.tsv",
     },
 
-    "BWA": {
+    "fastqc": {
+        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/fastqc",
+        "adapters": "/mnt/beegfs/userdata/i_padioleau/genome_data/adapters_for_fastqc.tsv",
+    },
+
+    "bwa": {
         "app": "/mnt/beegfs/software/bwa/2.2.1/bin/bwa-mem2",
+        "humain": {
+            "index": "/mnt/beegfs/scratch/Lg_PANUNZI/Konstantin/gatk/human_g1k_v37.fasta",
+        },
+	"mouse": {
+            "index":  "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/bwa_mm9_from_sanger/NCBIM37_um.fa",
+        },
     },
 
-    "BCFTOOLS": {
+    "samtools": {
+        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/samtools",
+    },
+
+
+    "gatk": {
+        "app": "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
+        "scripts": {
+            "reformat_mutect2": "/mnt/beegfs/userdata/i_padioleau/code/reformat_mutect2_vcf_for_oncotator_input_GATK_4_1_8_1.py",
+        },
+        "humain": {
+            "target_interval": " -L 1",
+            "genome_fasta": "/mnt/beegfs/scratch/Lg_PANUNZI/Konstantin/gatk/human_g1k_v37.fasta",
+            "gnomad_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/af-only-gnomad.raw.sites.b37.vcf.gz",
+            "mutect_filter_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/small_exac_common_3_b37.vcf",
+            "WGS": {
+                "mutect_interval_dir": "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/splitted_genome_bed_20Mb_segment",
+                "hsmetrics_interval": "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/human_g1k_v37_major_chr_100kb_windows.interval",
+                "hsmetrics_bait": "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/human_g1k_v37_major_chr_100kb_windows.interval",
+            },
+            "WES": {
+                "mutect_interval_dir": "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/bed_for_mutect2",
+                "hsmetrics_interval": "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/S07604514_Padded_b37.intervals",
+                "hsmetrics_bait": "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/S07604514_Padded_b37.intervals",
+            },
+	},
+        "mouse": {
+            "target_interval": " -L /mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.bed",
+            "genome_fasta": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/bwa_mm9_from_sanger/NCBIM37_um.fa",
+            "gnomad_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/genome_project_snp/mgp_V2_snp_indel_mm9.vcf.gz",
+            "mutect_filter_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/genome_project_snp/mgp_V2_snp_indel_mm9.vcf.gz",
+
+            "WGS": {
+                "mutect_interval_dir": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/interval_mutect2",
+            },
+            "WES": {
+                "mutect_interval_dir": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/interval_mutect2",
+            },
+	},
+    },
+
+    "facet_snp_pileup": {
+        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/snp-pileup",
+    }, 
+
+
+    "R": {
+        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/Rscript",
+        "scripts": {
+            "facet_graph": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/facets_graphs.R",            
+        },
+    },
+
+    "annovar": {
+        "app": "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/table_annovar.pl",
+        "humain": {
+            "DB": "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/humandb/",
+        },
+        "mouse": {
+            "DB": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/annovardb/",
+        },
+    },
+
+    "vcf2bed": {
+        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/vcf2bed.py",
+    },
+
+    "bcftools": {
         "app":"~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/bcftools",
     },
 
@@ -19,45 +99,36 @@
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/cnv_facets.R",
     },
 
-    "FACET_GRAPH": {
-        "app": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/facets_graphs.R",
-    },
-
-    "FACET_SNP_PILEUP": {
-        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/snp-pileup",
-    }, 
-
-    "FASTP": {
-        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/fastp",
-    },
-
-    "FASTQC": {
-        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/fastqc",
-    },
-
-    "GATK": {
-        "app": "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
-    },
-
     "JAVA": {
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/java",
     },
 
-    "MERGE_ONCOTATOR": {
-        "app": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/merge_oncotator_MAF.py",
-    },
-
-    "MOSDEPTH": {
+    "mosdepth": {
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/mosdepth",
     },
 
-    "ONCOTATOR": {
+    "oncotator": {
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/oncotator",
+        "humain": {
+            "DB": "/mnt/beegfs/userdata/i_padioleau/genome_data/oncotator/oncotator_v1_ds_April052016",
+            "cosmic_mutation": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/databases/CosmicMutant_count.tsv",
+            "cancer_census_oncogene": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/databases/cancer_gene_census_hg19_oncogene_IDs.tsv",
+            "cancer_census_tumorsupressor": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/databases/cancer_gene_census_hg19_tumor_supressor_genes_IDs.tsv",
+        },
+
+        "mouse": {
+            "DB": "",
+            "cosmic_mutation": ""
+            "cancer_census_oncogene": ""
+            "cancer_census_tumorsupressor": "",
+        },
+
         "scripts": {
-            "EXTRACT_TUMOR_VS_NORMAL": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/oncotator_extract_information_from_MAF_tumor_Vs_normal.py",
+            "merge_oncotator": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/merge_oncotator_MAF.py",
+            "extract_tumor_vs_normal": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/oncotator_extract_information_from_MAF_tumor_Vs_normal.py",
+            "pileup": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/01_add_pileup_info_to_oncotator_tsv_files.py",
+            "cosmic_t_n": "/mnt/beegfs/userdata/i_padioleau/code/cross_oncotator_TvN_with_COSMIC_pipeline_version.py",
             "EXTRACT_TUMOR_ONLY": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/oncotator_extract_information_from_MAF_tumor_only.py",
-            "PILEUP": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/01_add_pileup_info_to_oncotator_tsv_files.py",
-            "COSMIC_T_N": "/mnt/beegfs/userdata/i_padioleau/code/cross_oncotator_TvN_with_COSMIC_pipeline_version.py",
             "COSMIC_T_ONLY": "/mnt/beegfs/userdata/i_padioleau/code/cross_oncotator_tumor_only_with_COSMIC_pipeline_version.py",        
         },
     }, 
@@ -66,47 +137,31 @@
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/picard",
     },
 
-    "APP_REFORMAT_MUTECT2"                              : "/mnt/beegfs/userdata/i_padioleau/code/reformat_mutect2_vcf_for_oncotator_input_GATK_4_1_8_1.py",
-
-    "R": {
-        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/Rscript",
-    },
-
-    "SAMTOOLS": {
-        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/samtools",
-    },
-
     "VCFSORT": {
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/vcfsort",
     },
 
-    "VCF2BED": {
-        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/vcf2bed.py",
-    },
+    "Humain_CNV_FACETS_CVAL"                                   : "25 400",
+    "Humain_CNV_FACETS_REF"                                    : "hg19",
+    "Humain_EXOM_BED"                                          : "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/bed_for_mutect2/S07604514_Padded_b37.bed",
+    "Humain_FACET_REF"                                         : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/af-only-gnomad.raw.sites.b37.vcf.gz",
+    "Humain_GENOME_2BIT"                                       : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/human_g1k_v37.2bit",
+    "Humain_MAX_ALT_ALLELES_IN_NORMAL_COUNT"                   : "0",
+    "Humain_ONCOGENES_DB"                                      : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_oncogene_IDs.tsv",
+    "Humain_TUMOR_SUPRESSOR_DB"                                : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_tumor_supressor_genes_IDs.ts",
 
-    "ANNOVAR_DB"                                        : "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/humandb/",
-    "BWA_INDEX"                                         : "/mnt/beegfs/scratch/Lg_PANUNZI/Konstantin/gatk/human_g1k_v37.fasta",
-    "CANCER_CENSUS_ONCOGENE"                            : "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/databases/cancer_gene_census_hg19_oncogene_IDs.tsv",
-    "CANCER_CENSUS_TUMORSUPRESSOR"                      : "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/databases/cancer_gene_census_hg19_tumor_supressor_genes_IDs.tsv",    
-    "CNV_FACETS_CVAL"                                   : "25 400",
-    "CNV_FACETS_REF"                                    : "hg19",
-    "COSMIC_MUTATION"                                   : "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/databases/CosmicMutant_count.tsv",
-    "COSMIC_MUTATION_DB"                                : "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/databases/CosmicMutant_count.tsv",
-    "EXOM_BED"                                          : "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/bed_for_mutect2/S07604514_Padded_b37.bed",
-    "FACET_REF"                                         : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/af-only-gnomad.raw.sites.b37.vcf.gz",
-    "FASTP_ADAPTERS"                                    : "/mnt/beegfs/userdata/i_padioleau/genome_data/adapters_for_fastp.tsv",
-    "FASTQC_ADAPTERS"                                   : "/mnt/beegfs/userdata/i_padioleau/genome_data/adapters_for_fastqc.tsv",
-    "GENOME_FASTA"                                      : "/mnt/beegfs/scratch/Lg_PANUNZI/Konstantin/gatk/human_g1k_v37.fasta",
-    "GENOME_2BIT"                                       : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/human_g1k_v37.2bit",
-    "GNOMAD_REF"                                        : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/af-only-gnomad.raw.sites.b37.vcf.gz",
-    "HSMETRICS_INTERVAL"                                : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/human_g1k_v37_major_chr_100kb_windows.interval",
-    "HSMETRICS_BAIT"                                    : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/human_g1k_v37_major_chr_100kb_windows.interval",
-    "MAX_ALT_ALLELES_IN_NORMAL_COUNT"                   : "0",
-    "MUTECT_FILTER_REF"                                 : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/small_exac_common_3_b37.vcf",
-    "MUTECT_INTERVAL_DIR"                               : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/splitted_genome_bed_20Mb_segment",
-    "ONCOGENES_DB"                                      : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_oncogene_IDs.tsv",
-    "ONCOTATOR_DB"                                      : "/mnt/beegfs/userdata/i_padioleau/genome_data/oncotator/oncotator_v1_ds_April052016/",
-    "REMOVE_DUPLICATES"                                 : "True",
-    "TARGET_INTERVAL"                                   : "",
-    "TUMOR_SUPRESSOR_DB"                                : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_tumor_supressor_genes_IDs.ts"
+    "Mouse_CNV_FACETS_CVAL"                                   : "25 400",
+    "Mouse_CNV_FACETS_REF"                                    : "mm9",
+    "Mouse_EXOM_BED"                                          : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.bed",
+    "Mouse_FACET_REF"                                         : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/genome_project_snp/mgp_V2_snp_indel_mm9.vcf.gz",
+    "Mouse_GENOME_2BIT"                                       : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/bwa_mm9_from_sanger/NCBIM37_um.fa",
+    "Mouse_HSMETRICS_INTERVAL"                                : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
+    "Mouse_HSMETRICS_BAIT"                                    : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
+    "Mouse_MAX_ALT_ALLELES_IN_NORMAL_COUNT"                   : "0",
+    "Mouse_ONCOGENES_DB"                                      : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_oncogene_IDs.tsv",
+    "Mouse_ONCOTATOR_ENV"                                     : "/data/ipadioleau/opt/oncotator-1.9.9.0/bin/activate",
+    "Mouse_REMOVE_DUPLICATES"                                 : "True",
+    "Mouse_STAR_INDEX"                                        : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/STAR_2_6_index/",
+    "Mouse_TUMOR_SUPRESSOR_DB"                                : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_tumor_supressor_genes_IDs.tsv"
+
 }

@@ -36,7 +36,7 @@ rule Mutect2_tumor_only:
         " -tumor $readGroup_{wildcards.tsample}"
         " -O {output.VCF} 2> {log}" 
         
- rule concatenate_mutect2_tumor_only:
+rule concatenate_mutect2_tumor_only:
     input:
         vcfs = expand("Mutect2_T_tmp/{{tsample}}_tumor_only_T_ON_{mutect_interval}.vcf.gz", mutect_interval=mutect_intervals)
     output:
