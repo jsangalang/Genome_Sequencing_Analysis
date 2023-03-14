@@ -89,9 +89,11 @@
     "annovar": {
         "app": "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/table_annovar.pl",
         "humain": {
+            "ref": "hg19",
             "DB": "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/humandb/",
         },
         "mouse": {
+            "ref": "mm9",
             "DB": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/annovardb/",
         },
     },
