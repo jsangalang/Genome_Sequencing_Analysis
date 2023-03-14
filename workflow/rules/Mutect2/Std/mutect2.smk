@@ -14,10 +14,10 @@ rule Mutect2:
         queue = "mediumq",
         tumor_group = "{tsample}",
         norm_group  = "{nsample}",
-        gatk        = config["gatk"]["app"]
+        gatk        = config["gatk"]["app"],
+        gnomad_ref  = config["gatk"][config["samples"]]["gnomad_ref"],
         index       = config["gatk"][config["samples"]]["genome_fasta"],
         interval    = config["gatk"][config["samples"]][config["seq_type"]]["mutect_interval_dir"] + "/{interval}.bed",
-        gnomad_ref  = configconfig["gatk"][config["samples"]]["gnomad_ref"]
     log:
         "logs/Mutect2_TvN/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.log"
     threads : 16

@@ -9,7 +9,7 @@ rule facets_snp_pilleup:
     params:
         queue = "mediumq",
         snp_pileup = config["facet_snp_pileup"]["app"],
-        gnomad_ref = config["facet_snp_pileup"][config["samples"]]["facet_snp_pileup"],
+        gnomad_ref = config["facet_snp_pileup"][config["samples"]]["facet_ref"],
     threads : 1
     resources:
         mem_mb = 10240

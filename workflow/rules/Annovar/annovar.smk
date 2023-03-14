@@ -8,11 +8,11 @@ rule annovar:
         vcf = "annovar/{nsample}.hg19_multianno.vcf"
     params:
         queue = "mediumq",
-        annovar = config["APP_ANNOVAR"],
-        annovar_db = config["ANNOVAR"][config["samples"]]["DB"],
+        annovar = config["annovar"]["app"],
+        annovar_db = config["annovar"][config["samples"]]["DB"],
     threads : 4
     resources:
-        mem_mb = 8000
+        mem_mb = 10240
     log:
         "logs/annovar/{nsample}.log"
     shell :

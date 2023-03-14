@@ -46,8 +46,8 @@ rule split_Mutect2:
     params:
         queue    = "shortq",
         bcftools = config["bcftools"]["app"],
-        reformat = config["gatk"]["scripts"]["reformat_mutect2"]
-        interval = config["gatk"][config["samples"]][config["seq_type"]]["MUTECT_INTERVAL_DIR"] + "/{interval}.bed"
+        reformat = config["gatk"]["scripts"]["reformat_mutect2"],
+        interval = config["gatk"][config["samples"]][config["seq_type"]]["mutect_interval_dir"] + "/{interval}.bed",
     log:
         "logs/Mutect2_TvN_oncotator_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.log"
     threads : 1

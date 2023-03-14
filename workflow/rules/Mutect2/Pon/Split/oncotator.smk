@@ -19,8 +19,8 @@ rule get_variant_bed_pon:
 rule samtools_mpileup_pon:
     input:
         BED = "variant_bed_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp.bed",
-        BAM = "bam/{tsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"] == True else "bam/{tsample}.recal.bam",
-        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"] == True else "bam/{tsample}.recal.bam.bai"
+        BAM = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
+        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai"
     output:
         PILEUP = "pileup_TvN/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.pileup.gz"
     log:

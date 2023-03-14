@@ -19,7 +19,7 @@
         "humain": {
             "index": "/mnt/beegfs/scratch/Lg_PANUNZI/Konstantin/gatk/human_g1k_v37.fasta",
         },
-	"mouse": {
+        "mouse": {
             "index":  "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/bwa_mm9_from_sanger/NCBIM37_um.fa",
         },
     },
@@ -27,7 +27,6 @@
     "samtools": {
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/samtools",
     },
-
 
     "gatk": {
         "app": "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
@@ -49,7 +48,7 @@
                 "hsmetrics_interval": "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/S07604514_Padded_b37.intervals",
                 "hsmetrics_bait": "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/S07604514_Padded_b37.intervals",
             },
-	},
+        },
         "mouse": {
             "target_interval": " -L /mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.bed",
             "genome_fasta": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/bwa_mm9_from_sanger/NCBIM37_um.fa",
@@ -65,16 +64,16 @@
                 "hsmetrics_interval": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
                 "hsmetrics_bait"    : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
             },
-	},
+        },
     },
 
     "facet_snp_pileup": {
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/snp-pileup",
         "humain": {
-	    "facet_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/af-only-gnomad.raw.sites.b37.vcf.gz",
+            "facet_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/af-only-gnomad.raw.sites.b37.vcf.gz",
         },
         "mouse": {
-	    "facet_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/genome_project_snp/mgp_V2_snp_indel_mm9.vcf.gz",
+            "facet_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/genome_project_snp/mgp_V2_snp_indel_mm9.vcf.gz",
         },
     }, 
 
@@ -120,10 +119,10 @@
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/cnv_facets.R",
         "humain": {
             "cval": "25 400",
-	    "ref": "hg19",
+            "ref": "hg19",
         }, 
         "mouse": {
-    	    "cval": "25 400",
+            "cval": "25 400",
             "ref": "mm9",
         }, 
     },
@@ -145,8 +144,8 @@
         "mouse": {
             "ref": "mm9",
             "DB": "",
-            "cosmic_mutation": ""
-            "cancer_census_oncogene": ""
+            "cosmic_mutation": "",
+            "cancer_census_oncogene": "",
             "cancer_census_tumorsupressor": "",
         },
 

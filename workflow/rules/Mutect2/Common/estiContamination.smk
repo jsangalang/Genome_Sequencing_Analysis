@@ -7,8 +7,8 @@ rule get_pileup_summaries:
         "cross_sample_contamination/{tsample}_getpileupsummaries.table"
     params:
         queue = "mediumq",
-        gatk  = config["gatk"]["app"]
-        mutect_filter_ref = config["gatk"][config["samples"]]["mutect_filter_ref"]
+        gatk  = config["gatk"]["app"],
+        mutect_filter_ref = config["gatk"][config["samples"]]["mutect_filter_ref"],
     log:
         "logs/cross_sample_contamination/{tsample}_getpileupsummaries.table.log"
     threads : 4

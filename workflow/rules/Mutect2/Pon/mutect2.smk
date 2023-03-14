@@ -13,11 +13,11 @@ rule Mutect2_pon:
         STATS = "Mutect2_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.gz.stats"
     params:
         queue = "mediumq",
-        gatk  = config["gatk"]["app"]
+        gatk  = config["gatk"]["app"],
         index = config["gatk"][config["samples"]]["genome_fasta"],
         panel_of_normal = "PoN/{panel_of_normal}.vcf",
         interval = config["gatk"][config["samples"]][config["seq_type"]]["mutect_interval_dir"] + "/{interval}.bed",
-        GNOMAD_REF = config["gatk"][config["samples"]]["gnomad_ref"]
+        GNOMAD_REF = config["gatk"][config["samples"]]["gnomad_ref"],
     log:
         "logs/Mutect2_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.log"
     threads : 16

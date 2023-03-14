@@ -2,7 +2,6 @@
 rule Collect_Sequencing_Artifact_Metrics:
     input :
         tumor_bam = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
-        index = config["GENOME_FASTA"]
     output:
         "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.bait_bias_detail_metrics.txt",
         "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.bait_bias_summary_metrics.txt",
@@ -11,8 +10,9 @@ rule Collect_Sequencing_Artifact_Metrics:
         "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.pre_adapter_summary_metrics.txt"      
     params:
         queue = "mediumq",
+        gatk  = config["gatk"]["app"],
+        index = config["gatk"][config["samples"]]["genome_fasta"],
         output_prefix = "collect_Sequencing_Artifact_Metrics/{tsample}_artifact",
-        gatk = config["gatk"]["app"]
     log:
         "logs/filter_Mutect2/{tsample}_artifact.log"
     threads : 4

@@ -1,5 +1,5 @@
 ## A rule to clean fastq files with fastp SE
-if config["paired"] = False:
+if config["paired"] == False:
     rule fastp_SE:
         input:
             fastq_0="DNA_samples/{sample}_0.fastq.gz",
@@ -21,7 +21,7 @@ if config["paired"] = False:
             shell('{params.fastp} --thread {threads} --dont_overwrite -i {input.fastq_0} -o {output.fastq_clean} --compression 9 --adapter_fasta {params.adapters} --trim_poly_g --trim_poly_x --length_required 25 --overrepresentation_analysis  --html {output.html_report} --json {output.json_report} 2> {log}')
 
 ## A rule to clean fastq files with fastp PE
-elif config["paired"] = True:
+elif config["paired"] == True:
     rule fastp_PE:
         input:
             fastq_1="DNA_samples/{sample}_1.fastq.gz",
