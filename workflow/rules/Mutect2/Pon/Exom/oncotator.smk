@@ -3,19 +3,19 @@ rule extract_exom_mutect2_pon:
     input:
         Mutect2_vcf = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz",
         Mutect2_vcf_index = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz.tbi",
-        exom_bed = config["EXOM_BED"]
     output:
         exom_Mutect2 = temp("Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom_unsorted.vcf.gz")
     log:
         "logs/Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.vcf.txt"
     params:
         queue = "mediumq",
-        bcftools = config["APP_BCFTOOLS"] 
+        bcftools = config["bcftools"]["app"],
+        exom_bed = config["bcftools"][config["samples"]]["exom_bed"],
     threads : 1
     resources:
-        mem_mb = 5000
+        mem_mb = 51200
     shell:
-        '{params.bcftools} view -l 9 -R {input.exom_bed} -o {output.exom_Mutect2} {input.Mutect2_vcf} 2> {log}'
+        '{params.bcftools} view -l 9 -R {params.exom_bed} -o {output.exom_Mutect2} {input.Mutect2_vcf} 2> {log}'
 
 # A rule to sort exom vcf
 rule sort_exom_mutect2_pon:
@@ -27,13 +27,13 @@ rule sort_exom_mutect2_pon:
         "logs/Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_sort.txt"
     params:
         queue = "shortq",
-        vcfSort = config["APP_VCFSORT"]
+        vcfsort = config["vcfsort"]["app"],
     threads : 1
     resources:
-        mem_mb = 5000
+        mem_mb = 51200
     shell:
         'bgzip -d {input.Mutect2_vcf} && '
-        '{params.vcfSort} Mutect2_TvNp_exom/{wildcards.tsample}_Vs_{wildcards.nsample}_PON_{wildcards.panel_of_normal}_twicefiltered_TvNp_exom_unsorted.vcf > Mutect2_TvNp_exom/{wildcards.tsample}_Vs_{wildcards.nsample}_PON_{wildcards.panel_of_normal}_twicefiltered_TvNp_exom.vcf && '
+        '{params.vcfsort} Mutect2_TvNp_exom/{wildcards.tsample}_Vs_{wildcards.nsample}_PON_{wildcards.panel_of_normal}_twicefiltered_TvNp_exom_unsorted.vcf > Mutect2_TvNp_exom/{wildcards.tsample}_Vs_{wildcards.nsample}_PON_{wildcards.panel_of_normal}_twicefiltered_TvNp_exom.vcf && '
         'bgzip Mutect2_TvNp_exom/{wildcards.tsample}_Vs_{wildcards.nsample}_PON_{wildcards.panel_of_normal}_twicefiltered_TvNp_exom.vcf'
 
 # A rule to generate a bed from mutect2 vcf, on tumor versus normal with panel of normals
@@ -46,13 +46,13 @@ rule index_exom_mutect2_pon:
         "logs/Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_index.txt"
     params:
         queue = "shortq",
-        gatk = config["APP_GATK"] 
+        gatk = config["gatk"]["app"]
     threads : 1
     conda: "pipeline_GATK_2.1.4_V2"
     resources:
         mem_mb = 1000
     shell:
-        'gatk IndexFeatureFile -F {input.exom_Mutect2} 2> {log}'
+        '{params.gatk} IndexFeatureFile -F {input.exom_Mutect2} 2> {log}'
 
 # A rule to generate a bed from mutect2 vcf, on tumor versus normal with panel of normals
 rule get_variant_bed_pon_exom:
@@ -65,10 +65,10 @@ rule get_variant_bed_pon_exom:
         "logs/variant_bed_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_exom.bed.txt"
     params:
         queue = "mediumq",
-        vcf2bed = config["APP_VCF2BED"] 
+        vcf2bed = config["vcf2bed"]["app"],
     threads : 1
     resources:
-        mem_mb = 5000
+        mem_mb = 51200
     shell:
         'zcat {input.Mutect2_vcf} | python2 {params.vcf2bed} - > {output.BED} 2> {log}'
 
@@ -76,42 +76,41 @@ rule get_variant_bed_pon_exom:
 rule samtools_mpileup_pon_exom:
     input:
         BED = "variant_bed_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_exom.bed",
-        GENOME_REF_FASTA = config["GENOME_FASTA"],
-        BAM = "bam/{tsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam",
-        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam.bai"
+        BAM = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
+        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai"
     output:
         PILEUP = "pileup_TvN_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_exom.pileup.gz"
     log:
         "logs/pileup_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_exom.pileup.txt"
     params:
         queue = "mediumq",
-        samtools = config["APP_SAMTOOLS"]
+        samtools = config["samtools"]["app"],
+        genome_fasta = config["gatk"][config["samples"]]["genome_fasta"],
     threads : 1
     resources:
-        mem_mb = 5000
+        mem_mb = 51200
     shell:
-        '{params.samtools} mpileup -a -B -l {input.BED} -f {input.GENOME_REF_FASTA} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
+        '{params.samtools} mpileup -a -B -l {input.BED} -f {params.genome_fasta} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
 
 # A rule to annotate mutect2 tumor versus normal and panel of normal results with oncotator  
 rule oncotator_pon_exom:
     input:
-        ONCOTATOR_DB = config["ONCOTATOR_DB"],
         Mutect2_vcf = "Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom.vcf.gz",
         Mutect2_vcf_index = "Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom.vcf.gz.tbi",
     output:
         MAF="oncotator_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_exom.TCGAMAF"
     params:
         queue = "mediumq",
-        #activate_oncotator = config["ONCOTATOR_ENV"],
-        oncotator = config["APP_ONCOTATOR"]
+        DB    = config["oncotator"][config["samples"]]["DB"],
+        ref   = config["oncotator"][config["samples"]]["ref"],
+        oncotator = config["oncotator"]["app"],
     log:
         "logs/oncotator_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_exom.TCGAMAF.log"
     threads : 1
     resources:
-        mem_mb = 100000
+        mem_mb = 51200
     shell:
-        '{params.oncotator} --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={input.ONCOTATOR_DB} {input.Mutect2_vcf} {output.MAF} hg19 2> {log}'
-        #'set +u; source {params.activate_oncotator}; set -u; oncotator --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={input.ONCOTATOR_DB} {input.Mutect2_vcf} {output.MAF} hg19; deactivate'
+        '{params.oncotator} --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={params.DB} {input.Mutect2_vcf} {output.MAF} {params.ref} 2> {log}'
 
 ## A rule to simplify oncotator output on tumor vs normal samples with panel of normal
 rule oncotator_reformat_TvN_pon_exom:
@@ -124,10 +123,10 @@ rule oncotator_reformat_TvN_pon_exom:
         "logs/oncotator_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_selection_exom.txt"
     params:    
         queue = "shortq",
-        oncotator_extract_TvN = config["APP_ONCOTATOR_EXTRACT_TUMOR_VS_NORMAL"]
+        oncotator_extract_TvN = config["oncotator"]["scripts"]["extract_tumor_vs_normal"],
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 51200
     shell:
         'python2.7 {params.oncotator_extract_TvN} {input.maf} {output.maf} {output.tsv} 2> {log}'
 
@@ -142,10 +141,10 @@ rule oncotator_with_pileup_TvN_pon_exom:
         "logs/oncotator_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_with_pileup_exom.txt"
     params:
         queue = "shortq",
-        oncotator_cross_pileup = config["APP_ONCOTATOR_X_PILEUP"]
+        oncotator_cross_pileup = config["oncotator"]["scripts"]["pileup"],
     threads : 1
     resources:
-        mem_mb = 500
+        mem_mb = 51200
     shell:
         'python {params.oncotator_cross_pileup} {input.pileup} {input.tsv} {output.tsv}'
 
@@ -159,13 +158,13 @@ rule oncotator_with_COSMIC_TvN_pon_exom:
         "logs/oncotator_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_with_COSMIC_exom.txt"
     params:
         queue = "shortq",
-        oncotator_cross_cosmic = config["APP_ONCOTATOR_X_COSMIC_T_N"],
-        cosmic_mutation = config["COSMIC_MUTATION"],
-        cancer_census_oncogene = config["CANCER_CENSUS_ONCOGENE"],
-        cancer_census_tumorsupressor = config["CANCER_CENSUS_TUMORSUPRESSOR"]
+        oncotator_cross_cosmic = config["oncotator"]["scripts"]["cosmic_t_n"],
+        cosmic_mutation = config["oncotator"][config["samples"]]["cosmic_mutation"],
+        cancer_census_oncogene = config["oncotator"][config["samples"]]["cancer_census_oncogene"],
+        cancer_census_tumorsupressor = config["oncotator"][config["samples"]]["cancer_census_tumorsupressor"],
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 10240
     shell:
         'python2.7 {params.oncotator_cross_cosmic}  {input.tsv} {output.tsv} {params.cosmic_mutation} {params.cancer_census_oncogene} {params.cancer_census_tumorsupressor} 2> {log}'
 
