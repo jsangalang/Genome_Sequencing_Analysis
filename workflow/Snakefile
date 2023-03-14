@@ -13,7 +13,7 @@ TUMOR_ONLY = False
 ## Note 2: config["MUTECT_INTERVAL_DIR"] should not be terminated by "/"
 
 ## wildcards for mutect intervals
-mutect_intervals, = glob_wildcards(config["MUTECT_INTERVAL_DIR"] + "/{interval}.bed")
+mutect_intervals, = glob_wildcards(config["gatk"][config["samples"]]["MUTECT_INTERVAL_DIR"] + "/{interval}.bed")
 
 ## Get all fastq
 FASTQ_SAMPLES = glob_wildcards("DNA_samples/{name}.fastq.gz")
