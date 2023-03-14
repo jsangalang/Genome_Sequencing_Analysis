@@ -133,6 +133,7 @@
     "oncotator": {
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/oncotator",
         "humain": {
+            "ref": "hg19",
             "DB": "/mnt/beegfs/userdata/i_padioleau/genome_data/oncotator/oncotator_v1_ds_April052016",
             "cosmic_mutation": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/databases/CosmicMutant_count.tsv",
             "cancer_census_oncogene": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/databases/cancer_gene_census_hg19_oncogene_IDs.tsv",
@@ -140,6 +141,7 @@
         },
 
         "mouse": {
+            "ref": "mm9",
             "DB": "",
             "cosmic_mutation": ""
             "cancer_census_oncogene": ""
