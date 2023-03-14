@@ -15,7 +15,7 @@ rule extract_exom_mutect2:
     resources:
         mem_mb = 51200
     shell:
-        '{params.bcftools} view -l 9 -R {input.exom_bed} -o {output.exom_Mutect2} {input.Mutect2_vcf} 2> {log}'
+        '{params.bcftools} view -l 9 -R {params.exom_bed} -o {output.exom_Mutect2} {input.Mutect2_vcf} 2> {log}'
 
 # A rule to sort exom vcf
 rule sort_exom_mutect2:
@@ -27,12 +27,13 @@ rule sort_exom_mutect2:
         "logs/Mutect2_TvN_exom/{tsample}_Vs_{nsample}_TvN_sort.txt"
     params:
         queue = "shortq",
+        vcfsort = config["vcfsort"]["app"],
     threads : 1
     resources:
         mem_mb = 51200
     shell:
         'bgzip -d {input.Mutect2_vcf} && '
-        '{params.vcfSort} Mutect2_TvN_exom/{wildcards.tsample}_Vs_{wildcards.nsample}_twicefiltered_TvN_exom_unsorted.vcf > Mutect2_TvN_exom/{wildcards.tsample}_Vs_{wildcards.nsample}_twicefiltered_TvN_exom.vcf && '
+        '{params.vcfsort} Mutect2_TvN_exom/{wildcards.tsample}_Vs_{wildcards.nsample}_twicefiltered_TvN_exom_unsorted.vcf > Mutect2_TvN_exom/{wildcards.tsample}_Vs_{wildcards.nsample}_twicefiltered_TvN_exom.vcf && '
         'bgzip Mutect2_TvN_exom/{wildcards.tsample}_Vs_{wildcards.nsample}_twicefiltered_TvN_exom.vcf'
 
 # A rule to extract exom variant from a whole genome mutect2
@@ -45,13 +46,13 @@ rule index_exom_mutect2:
         "logs/Mutect2_TvN_exom/{tsample}_Vs_{nsample}_TvN_index.txt"
     params:
         queue = "shortq",
-        gatk = config["gatk"]["app"]
+        gatk = config["gatk"]["app"],
     threads : 1
     resources:
         mem_mb = 10240
     conda: "pipeline_GATK_2.1.4_V2"
     shell:
-        'gatk IndexFeatureFile -F {input.exom_Mutect2} 2> {log}'
+        '{params.gatk} IndexFeatureFile -F {input.exom_Mutect2} 2> {log}'
 
 # A rule to generate a bed from mutect2 vcf  
 rule get_variant_bed_exom:
@@ -101,6 +102,7 @@ rule oncotator_exom:
     params:
         queue = "mediumq",
         DB    = config["oncotator"][config["samples"]]["DB"],
+        ref   = config["oncotator"][config["samples"]]["ref"],
         oncotator = config["oncotator"]["app"],
     log:
         "logs/oncotator_TvN_exom/{tsample}_Vs_{nsample}_annotated_TvN_exom.TCGAMAF"
@@ -108,7 +110,7 @@ rule oncotator_exom:
     resources:
         mem_mb = 51200
     shell:
-        '{params.oncotator} --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={params.DB} {input.Mutect2_vcf} {output.MAF} hg19 2> {log}'
+        '{params.oncotator} --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={params.DB} {input.Mutect2_vcf} {output.MAF} {params.ref} 2> {log}'
 
 ## A rule to simplify oncotator output on tumor vs normal samples
 rule oncotator_reformat_TvN_exom:
@@ -124,7 +126,7 @@ rule oncotator_reformat_TvN_exom:
         oncotator_extract_TvN = config["oncotator"]["scripts"]["extract_tumor_vs_normal"],
     threads : 1
     resources:
-        mem_mb = 10240
+        mem_mb = 51200
     shell:
         'python2.7 {params.oncotator_extract_TvN} {input.maf} {output.maf} {output.tsv} 2> {log}'
 
