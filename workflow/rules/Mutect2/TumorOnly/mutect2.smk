@@ -72,6 +72,9 @@ rule concatenate_mutect2_tumor_only_stats:
         "ls -1a Mutect2_T_tmp/{wildcards.tsample}_tumor_only_T_ON_*stats > mutect2_T_tmp_list/{wildcards.tsample}_tumor_only_T_mutect2_tmp_stats.list &&"
         "{params.gatk}  --java-options \"-Xmx40g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" MergeMutectStats --stats {output.stat_liste} -O {output.concatened_stats} 2> {log}"
 
+## include: "../Common/collectSeqAM.smk"
+## include: "../Common/estiContamination.smk"
+
 ## A rule to filter variant call, from mutect tumor only
 rule filter_mutect_calls_tumor_only:
     input :
