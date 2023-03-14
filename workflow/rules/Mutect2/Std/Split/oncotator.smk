@@ -11,7 +11,7 @@ rule get_variant_bed:
         vcf2bed = config["vcf2bed"]["app"],
     threads : 1
     resources:
-        mem_mb = 5000
+        mem_mb = 10240
     shell:
         'zcat {input.Mutect2_vcf} | python2 {params.vcf2bed} - > {output.BED} 2> {log}'
 
@@ -67,13 +67,14 @@ rule oncotator:
         queue = "mediumq",
         oncotator = config["oncotator"]["app"],
         DB    = config["oncotator"][config["samples"]]["DB"],
+        ref   = config["oncotator"][config["samples"]]["ref"],
     log:
         "logs/oncotator_TvN_tmp/{tsample}_Vs_{nsample}_ON_{interval}_annotated_TvN.TCGAMAF"
     threads : 1
     resources:
         mem_mb = 10240
     shell:
-        '{params.oncotator} --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={params.DB} {input.interval_vcf} {output.MAF} hg19 2> {log}'
+        '{params.oncotator} --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={params.DB} {input.interval_vcf} {output.MAF} {params.ref} 2> {log}'
 
 
 # concatenate oncotator TvN
@@ -111,7 +112,7 @@ rule oncotator_reformat_TvN:
     resources:
         mem_mb = 10240
     shell:
-        'python2.7 {params.oncotator_extract_TvN} {input.maf} {output.maf} {output.tsv} 2> {log}'
+        'python2.7 {params.extract} {input.maf} {output.maf} {output.tsv} 2> {log}'
 
 ## A rule to cross oncotator output on tumor vs normal samples with pileup information
 rule oncotator_with_pileup_TvN:
