@@ -7,21 +7,21 @@
 
 rule Mutect2_tumor_only:
     input:
-        index = config["GENOME_FASTA"],
-        tumor_bam = "bam/{tsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam",
-        tumor_bai = "bam/{tsample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam.bai",
-        interval = config["MUTECT_INTERVAL_DIR"] + "/{interval}.bed",
-        GNOMAD_REF = config["GNOMAD_REF"]
+        tumor_bam = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
+        tumor_bai = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai",
     output:
         VCF = "Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz",
         INDEX = "Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz.tbi",
         STATS = "Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz.stats"
     params:
         queue = "mediumq",
-        gatk = config["APP_GATK"]
+        gatk        = config["gatk"]["app"]
+        index       = config["gatk"][config["samples"]]["genome_fasta"],
+        interval    = config["gatk"][config["samples"]][config["seq_type"]]["mutect_interval_dir"] + "/{interval}.bed",
+        gnomad_ref  = configconfig["gatk"][config["samples"]]["gnomad_ref"]
     log:
         "logs/Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.log"
-    threads : 24
+    threads : 16
     resources:
         mem_mb = 51200
     shell:
@@ -29,9 +29,9 @@ rule Mutect2_tumor_only:
         "{params.gatk} --java-options \"-Xmx40g  -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" Mutect2"
         " --native-pair-hmm-threads {threads} "
         " --dont-use-soft-clipped-bases true"
-        " -L {input.interval}"
-        " --reference {input.index} "
-        " --germline-resource {input.GNOMAD_REF}"
+        " -L {params.interval}"
+        " --reference {params.index} "
+        " --germline-resource {params.gnomad_ref}"
         " -I {input.tumor_bam}"
         " -tumor $readGroup_{wildcards.tsample}"
         " -O {output.VCF} 2> {log}" 
@@ -44,15 +44,15 @@ rule concatenate_mutect2_tumor_only:
         vcf_liste = "mutect2_T_tmp_list/{tsample}_tumor_only_T_mutect2_tmp.list"
     params:
         queue = "shortq",
-        gatk = config["APP_GATK"]
+        gatk = config["gatk"]["app"]
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 40960
     log:
         "logs/vcftools/{tsample}_tumor_only_T.vcf.log"
     shell :
         "ls -1a Mutect2_T_tmp/{wildcards.tsample}_tumor_only_T_ON_*gz > mutect2_T_tmp_list/{wildcards.tsample}_tumor_only_T_mutect2_tmp.list &&"
-        "{params.gatk}  --java-options \"-Xmx10g  -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" MergeVcfs -I {output.vcf_liste} -O {output.concatened_vcf} 2> {log}"
+        "{params.gatk}  --java-options \"-Xmx40g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" MergeVcfs -I {output.vcf_liste} -O {output.concatened_vcf} 2> {log}"
 
 rule concatenate_mutect2_tumor_only_stats:
     input:
@@ -62,15 +62,15 @@ rule concatenate_mutect2_tumor_only_stats:
         stat_liste = "mutect2_T_tmp_list/{tsample}_tumor_only_T_mutect2_tmp_stats.list"
     params:
         queue = "shortq",
-        gatk = config["APP_GATK"]
-    threads : 1
+        gatk = config["gatk"]["app"]
+    threads : 4
     resources:
-        mem_mb = 10000
+        mem_mb = 40960
     log:
         "logs/vcftools/{tsample}_tumor_only_T.vcf.log"
     shell :
         "ls -1a Mutect2_T_tmp/{wildcards.tsample}_tumor_only_T_ON_*stats > mutect2_T_tmp_list/{wildcards.tsample}_tumor_only_T_mutect2_tmp_stats.list &&"
-        "{params.gatk}  --java-options \"-Xmx10g  -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" MergeMutectStats --stats {output.stat_liste} -O {output.concatened_stats} 2> {log}"
+        "{params.gatk}  --java-options \"-Xmx40g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" MergeMutectStats --stats {output.stat_liste} -O {output.concatened_stats} 2> {log}"
 
 ## A rule to filter variant call, from mutect tumor only
 rule filter_mutect_calls_tumor_only:
@@ -85,14 +85,15 @@ rule filter_mutect_calls_tumor_only:
         INDEX = "Mutect2_T/{tsample}_tumor_only_filtered_T.vcf.gz.tbi"
     params:
         queue = "mediumq",
-        gatk = config["APP_GATK"]
+        gatk  = config["gatk"]["app"],
+        index = config["gatk"][config["samples"]]["genome_fasta"],
     log:
         "logs/filter_Mutect2_T/{tsample}_tumor_only_filtered_T.vcf.gz.log"
     threads : 1
     resources:
-        mem_mb = 100000
+        mem_mb = 40960
     shell:
-        "{params.gatk} --java-options \"-Xmx40g  -Djava.io.tmpdir=/mnt/beegfs/scratch/tmp \" FilterMutectCalls"
+        "{params.gatk} --java-options \"-Xmx40g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" FilterMutectCalls"
         " -V {input.Mutect2_vcf}"
         " -R {input.index}"
         " --contamination-table {input.contamination_table}"
@@ -108,14 +109,14 @@ rule Filter_By_Orientation_Bias_tumor_only:
         filtered_vcf_index = "Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz.tbi"
     params:
         queue = "mediumq",
-        gatk = config["APP_GATK"]
+        gatk = config["gatk"]["app"],
     log:
         "logs/filter_Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz.log"
-    threads : 1
+    threads : 4
     resources:
-        mem_mb = 100000
+        mem_mb = 40960
     shell:
-        "{params.gatk} --java-options \"-Xmx40g  -Djava.io.tmpdir=/mnt/beegfs/scratch/tmp \" FilterByOrientationBias"
+        "{params.gatk} --java-options \"-Xmx40g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" FilterByOrientationBias"
         " -V {input.Mutect2_vcf}"
         " -AM G/T -AM C/T"
         " -P {input.pre_adapter_detail_metrics}"
