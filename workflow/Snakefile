@@ -3,9 +3,6 @@ import os
 ## load json configuration file
 configfile: "workflow/config/config.json"
 
-print(config["samples"])
-print(config["seq_type"])
-
 ## Tumor vs Normal mode by default
 TUMOR_ONLY = False
 
