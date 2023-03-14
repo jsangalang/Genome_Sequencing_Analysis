@@ -3,19 +3,19 @@ rule extract_exom_mutect2_tumor_only:
     input:
         Mutect2_vcf = "Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz",
         Mutect2_vcf_index = "Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz.tbi",
-        exom_bed = config["EXOM_BED"]
     output:
         exom_Mutect2 = temp("Mutect2_T_exom/{tsample}_tumor_only_twicefiltered_T_exom_unsorted.vcf.gz")
     log:
         "logs/Mutect2_T_exom/{tsample}_tumor_only_T.vcf.txt"
     params:
         queue = "mediumq",
-        bcftools = config["APP_BCFTOOLS"] 
+        bcftools = config["bcftools"]["app"],
+        exom_bed = config["bcftools"][config["samples"]]["exom_bed"],
     threads : 1
     resources:
-        mem_mb = 5000
+        mem_mb = 51200
     shell:
-        '{params.bcftools} view -l 9 -R {input.exom_bed} -o {output.exom_Mutect2} {input.Mutect2_vcf} 2> {log}'
+        '{params.bcftools} view -l 9 -R {params.exom_bed} -o {output.exom_Mutect2} {input.Mutect2_vcf} 2> {log}'
  
 # A rule to sort exom vcf
 rule sort_exom_mutect2_tumor_only:
@@ -27,13 +27,13 @@ rule sort_exom_mutect2_tumor_only:
         "logs/Mutect2_T_exom/{tsample}_tumor_only_T_sort.txt"
     params:
         queue = "shortq",
-        vcfSort = config["APP_VCFSORT"]
+        vcfsort = config["vcfsort"]["app"],
     threads : 1
     resources:
         mem_mb = 5000
     shell:
         'bgzip -d {input.Mutect2_vcf} 2>> log && '
-        '{params.vcfSort} Mutect2_T_exom/{wildcards.tsample}_tumor_only_twicefiltered_T_exom_unsorted.vcf > Mutect2_T_exom/{wildcards.tsample}_tumor_only_twicefiltered_T_exom.vcf  2>> log && '
+        '{params.vcfsort} Mutect2_T_exom/{wildcards.tsample}_tumor_only_twicefiltered_T_exom_unsorted.vcf > Mutect2_T_exom/{wildcards.tsample}_tumor_only_twicefiltered_T_exom.vcf  2>> log && '
         'bgzip Mutect2_T_exom/{wildcards.tsample}_tumor_only_twicefiltered_T_exom.vcf 2>> log'
         
 # A rule to generate a bed from mutect2 vcf, on tumor only 
@@ -46,13 +46,13 @@ rule index_exom_mutect2_tumor_only:
         "logs/Mutect2_T_exom/{tsample}_tumor_only_T_index.txt"
     params:
         queue = "shortq",
-        gatk = config["APP_GATK"]
+        gatk = config["gatk"]["app"],
     threads : 1
     conda: "pipeline_GATK_2.1.4_V2"
     resources:
         mem_mb = 1000
     shell:
-        'gatk IndexFeatureFile -F {input.exom_Mutect2} 2> {log}'
+        '{params.gatk} IndexFeatureFile -F {input.exom_Mutect2} 2> {log}'
         
 # A rule to generate a bed from mutect2 vcf, on tumor only 
 rule get_variant_bed_tumor_only_exom:
@@ -65,10 +65,10 @@ rule get_variant_bed_tumor_only_exom:
         "logs/variant_bed_T_exom/{tsample}_tumor_only_T_exom.bed.txt"
     params:
         queue = "mediumq",
-        vcf2bed = config["APP_VCF2BED"] 
+        vcf2bed = config["vcf2bed"]["app"]
     threads : 1
     resources:
-        mem_mb = 5000
+        mem_mb = 51200
     shell:
         'zcat {input.Mutect2_vcf} | python2 {params.vcf2bed} - > {output.BED} 2> {log}'
 
@@ -76,42 +76,41 @@ rule get_variant_bed_tumor_only_exom:
 rule samtools_mpileup_tumor_only_exom:
     input:
         BED = "variant_bed_T_exom/{tsample}_tumor_only_T_exom.bed",
-        GENOME_REF_FASTA = config["GENOME_FASTA"],
-        BAM = "bam/{tsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam",
-        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam.bai"
+        BAM = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
+        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai"
     output:
         PILEUP = "pileup_T_exom/{tsample}_tumor_only_T_exom.pileup.gz"
     log:
         "logs/pileup_T_exom/{tsample}_tumor_only_T_exom.pileup.txt"
     params:
         queue = "mediumq",
-        samtools = config["APP_SAMTOOLS"]
+        samtools = config["samtools"]["app"],
+        genome_fasta = config["gatk"][config["samples"]]["genome_fasta"],
     threads : 1
     resources:
-        mem_mb = 5000
+        mem_mb = 51200
     shell:
-        '{params.samtools} mpileup -a -B -l {input.BED} -f {input.GENOME_REF_FASTA} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
+        '{params.samtools} mpileup -a -B -l {input.BED} -f {params.genome_fasta} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
 
 # A rule to annotate mutect2 tumor only results with oncotator 
 rule oncotator_tumor_only_exom:
     input:
-        ONCOTATOR_DB = config["ONCOTATOR_DB"],
         Mutect2_vcf = "Mutect2_T_exom/{tsample}_tumor_only_twicefiltered_T_exom.vcf.gz",
         Mutect2_vcf_index = "Mutect2_T_exom/{tsample}_tumor_only_twicefiltered_T_exom.vcf.gz.tbi"
     output:
         MAF="oncotator_T_exom/{tsample}_tumor_only_annotated_T_exom.TCGAMAF"
     params:
         queue = "mediumq",
-        #activate_oncotator = config["ONCOTATOR_ENV"],
-        oncotator = config["APP_ONCOTATOR"]
+        DB    = config["oncotator"][config["samples"]]["DB"],
+        ref   = config["oncotator"][config["samples"]]["ref"],
+        oncotator = config["oncotator"]["app"],
     log:
         "logs/oncotator_T_exom/{tsample}_tumor_only_annotated_T_exom.TCGAMAF"
     threads : 1
     resources:
-        mem_mb = 100000
+        mem_mb = 51200
     shell:
-        '{params.oncotator} --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={input.ONCOTATOR_DB} {input.Mutect2_vcf} {output.MAF} hg19 2> {log}'
-        #'set +u; source {params.activate_oncotator}; set -u; oncotator --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={input.ONCOTATOR_DB} {input.Mutect2_vcf} {output.MAF} hg19; deactivate'
+        '{params.oncotator} --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={params.DB} {input.Mutect2_vcf} {output.MAF} {params.ref} 2> {log}'
 
 ## A rule to simplify oncotator output on tumor only samples
 rule oncotator_reformat_tumor_only_exom:
@@ -124,10 +123,10 @@ rule oncotator_reformat_tumor_only_exom:
         "logs/oncotator_exom/{tsample}_tumor_only_T_selection_exom.txt"
     params:
         queue = "shortq",
-        oncotator_extract_Tonly = config["APP_ONCOTATOR_EXTRACT_TUMOR_ONLY"]
+        oncotator_extract_Tonly = config["oncotator"]["scripts"]["extract_tumor_only"],
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 51200
     shell:
         'python2.7 {params.oncotator_extract_Tonly} {input.maf} {output.maf} {output.tsv} 2> {log}'
 
@@ -142,10 +141,10 @@ rule oncotator_with_pileup_tumor_only_exom:
         "logs/oncotator_exom/{tsample}_tumor_only_T_selection_with_pileup_exom.txt"
     params:
         queue = "shortq",
-        oncotator_cross_pileup = config["APP_ONCOTATOR_X_PILEUP"]
+        oncotator_cross_pileup = config["oncotator"]["scripts"]["pileup"],
     threads : 1
     resources:
-        mem_mb = 500
+        mem_mb = 51200
     shell:
         'python {params.oncotator_cross_pileup} {input.pileup} {input.tsv} {output.tsv}'
 
@@ -159,13 +158,13 @@ rule oncotator_with_COSMIC_tumor_only_exom:
         "logs/oncotator_exom/{tsample}_tumor_only_T_selection_with_COSMIC_exom.txt"
     params:
         queue = "shortq",
-        oncotator_cross_cosmic = config["APP_ONCOTATOR_X_COSMIC_T_ONLY"],
-        cosmic_mutation = config["COSMIC_MUTATION"],
-        cancer_census_oncogene = config["CANCER_CENSUS_ONCOGENE"],
-        cancer_census_tumorsupressor = config["CANCER_CENSUS_TUMORSUPRESSOR"]
+        oncotator_cross_cosmic = config["oncotator"]["scripts"]["cosmic_t_only"],
+        cosmic_mutation = config["oncotator"][config["samples"]]["cosmic_mutation"],
+        cancer_census_oncogene = config["oncotator"][config["samples"]]["cancer_census_oncogene"],
+        cancer_census_tumorsupressor = config["oncotator"][config["samples"]]["cancer_census_tumorsupressor"],
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 10240
     shell:
         'python2.7 {params.oncotator_cross_cosmic}  {input.tsv} {output.tsv} {params.cosmic_mutation} {params.cancer_census_oncogene} {params.cancer_census_tumorsupressor} 2> {log}'
 
