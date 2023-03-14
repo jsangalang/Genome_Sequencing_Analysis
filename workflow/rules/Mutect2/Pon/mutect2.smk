@@ -75,6 +75,9 @@ rule concatenate_mutect2_pon_stats:
         "ls -1a Mutect2_TvNp_tmp/{wildcards.tsample}_Vs_{wildcards.nsample}_PON_{wildcards.panel_of_normal}_TvNp_ON_*stats > mutect2_TvNp_tmp_list/{wildcards.tsample}_Vs_{wildcards.nsample}_PON_{wildcards.panel_of_normal}_TvNp_mutect2_tmp_stats.list &&"
         "{params.gatk}  --java-options \"-Xmx40g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" MergeMutectStats --stats {output.stat_liste} -O {output.concatened_stats} 2> {log}"
 
+## include: "../Common/collectSeqAM.smk"
+## include: "../Common/estiContamination.smk"
+
 ## A rule to filter variant call, from mutect tumor Vs normal with PoN
 rule filter_mutect_calls_pon:
     input :
