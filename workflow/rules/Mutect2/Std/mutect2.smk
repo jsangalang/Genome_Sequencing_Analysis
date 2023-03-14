@@ -2,10 +2,10 @@
 ## Use list of target from target_interval_list.bed if it is present in the working directory
 rule Mutect2:
     input:
-        tumor_bam = "bam/{tsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam",
-        norm_bam = "bam/{nsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"]=="True" else "bam/{nsample}.recal.bam",
-        tumor_bai = "bam/{tsample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam.bai",
-        norm_bai = "bam/{nsample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"]=="True" else "bam/{nsample}.recal.bam.bai",
+        tumor_bam = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
+        norm_bam = "bam/{nsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{nsample}.recal.bam",
+        tumor_bai = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai",
+        norm_bai = "bam/{nsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{nsample}.recal.bam.bai",
     output:
         VCF = "Mutect2_TvN_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz",
         INDEX = "Mutect2_TvN_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz.tbi",
@@ -82,13 +82,13 @@ rule filter_mutect_calls:
         Mutect2_vcf = "Mutect2_TvN/{tsample}_Vs_{nsample}_TvN.vcf.gz",
         Mutect2_stats = "Mutect2_TvN/{tsample}_Vs_{nsample}_TvN.vcf.gz.stats",
         contamination_table = "cross_sample_contamination/{tsample}_calculatecontamination.table",
-        index = config["GENOME_FASTA"]
     output:
         VCF = "Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz",
         INDEX = "Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz.tbi"
     params:
         queue = "mediumq",
-        gatk = config["gatk"]["app"]
+        gatk  = config["gatk"]["app"],
+        index = config["gatk"][config["samples"]]["genome_fasta"],
     log:
         "logs/filter_Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz.log"
     threads : 4
