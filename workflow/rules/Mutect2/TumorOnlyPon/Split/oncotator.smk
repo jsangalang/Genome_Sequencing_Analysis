@@ -9,10 +9,10 @@ rule get_variant_bed_tumor_only_pon:
         "logs/variant_bed_Tp/{tsample}_PON_{panel_of_normal}_Tp.bed.txt"
     params:
         queue = "mediumq",
-        vcf2bed = config["APP_VCF2BED"] 
+        vcf2bed = config["vcf2bed"]["app"],
     threads : 1
     resources:
-        mem_mb = 5000
+        mem_mb = 10240
     shell:
         'zcat {input.Mutect2_vcf} | python2 {params.vcf2bed} - > {output.BED} 2> {log}'
 
@@ -20,40 +20,40 @@ rule get_variant_bed_tumor_only_pon:
 rule samtools_mpileup_tumor_only_pon:
     input:
         BED = "variant_bed_Tp/{tsample}_PON_{panel_of_normal}_Tp.bed",
-        GENOME_REF_FASTA = config["GENOME_FASTA"],
-        BAM = "bam/{tsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam",
-        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam.bai"
+        BAM = "bam/{tsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"] == True else "bam/{tsample}.recal.bam",
+        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"] == True else "bam/{tsample}.recal.bam.bai"
     output:
         PILEUP = "pileup_Tp/{tsample}_PON_{panel_of_normal}_Tp.pileup.gz"
     log:
         "logs/pileup_Tp/{tsample}_PON_{panel_of_normal}_Tp.pileup.txt"
     params:
         queue = "mediumq",
-        samtools = config["APP_SAMTOOLS"]
-    threads : 1
+        samtools = config["samtools"]["app"],
+        genome_ref_fasta = config["gatk"][config["samples"]]["genome_fasta"],
+    threads : 8
     resources:
-        mem_mb = 5000
+        mem_mb = 20480
     shell:
-        '{params.samtools} mpileup -a -B -l {input.BED} -f {input.GENOME_REF_FASTA} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
+        '{params.samtools} mpileup -@ {threads} -a -B -l {input.BED} -f {params.genome_ref_fasta} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
         
 ## A rule to split mutect2 results in pieces 
 rule split_Mutect2_tumor_only_pon:
     input:
         Mutect2_vcf = "Mutect2_Tp/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp.vcf.gz",
         vcf_index = "Mutect2_Tp/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp.vcf.gz.tbi",
-        interval = config["MUTECT_INTERVAL_DIR"] + "/{interval}.bed"
     output:
         interval_vcf_bcftools = temp("Mutect2_Tp_oncotator_tmp/{tsample}_PON_{panel_of_normal}_Tp_ON_{interval}_bcftools.vcf.gz"),
         interval_vcf = temp("Mutect2_Tp_oncotator_tmp/{tsample}_PON_{panel_of_normal}_Tp_ON_{interval}.vcf.gz")
     params:
         queue = "shortq",
-        bcftools = config["APP_BCFTOOLS"],
-        reformat_script = config["APP_REFORMAT_MUTECT2"]
+        bcftools = config["bcftools"]["app"],
+        reformat = config["gatk"]["scripts"]["reformat_mutect2"]
+        interval = config["gatk"][config["samples"]][config["seq_type"]]["MUTECT_INTERVAL_DIR"] + "/{interval}.bed"
     log:
         "logs/Mutect2_Tp_oncotator_tmp/{tsample}_PON_{panel_of_normal}_Tp_ON_{interval}.vcf.log"
     threads : 1
     resources:
-        mem_mb = 2000
+        mem_mb = 20480
     shell:
         '{params.bcftools} view -l 9 -R {input.interval} -o {output.interval_vcf_bcftools} {input.Mutect2_vcf} 2> {log}  &&'
         ' python {params.reformat_script} {output.interval_vcf_bcftools} {output.interval_vcf} 2>> {log}'        
@@ -61,22 +61,21 @@ rule split_Mutect2_tumor_only_pon:
 # A rule to annotate mutect2 tumor only with panel of normal results with oncotator 
 rule oncotator_tumor_only_pon:
     input:
-        ONCOTATOR_DB = config["ONCOTATOR_DB"],
         interval_vcf = "Mutect2_Tp_oncotator_tmp/{tsample}_PON_{panel_of_normal}_Tp_ON_{interval}.vcf.gz"
     output:
         MAF = temp("oncotator_Tp_tmp/{tsample}_PON_{panel_of_normal}_ON_{interval}_annotated_Tp.TCGAMAF")
     params:
         queue = "mediumq",
-        #activate_oncotator = config["ONCOTATOR_ENV"],
-        oncotator = config["APP_ONCOTATOR"]
+        oncotator = config["oncotator"]["app"],
+        DB    = config["oncotator"][config["samples"]]["DB"],
+        ref   = config["oncotator"][config["samples"]]["ref"],
     log:
         "logs/oncotator_Tp_tmp/{tsample}_PON_{panel_of_normal}_ON_{interval}_annotated_Tp.TCGAMAF"
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 10240
     shell:
-        'oncotator --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={input.ONCOTATOR_DB} {input.interval_vcf} {output.MAF} hg19 2> {log}'
-        #'set +u; source {params.activate_oncotator}; set -u; oncotator --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={input.ONCOTATOR_DB} {input.interval_vcf} {output.MAF} hg19; deactivate'
+        'oncotator --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={input.ONCOTATOR_DB} {input.interval_vcf} {output.MAF} {params.ref} 2> {log}'
 
 # concatenate oncotator T_only_pon
 rule concatenate_oncotator_tumor_only_pon:
@@ -87,10 +86,10 @@ rule concatenate_oncotator_tumor_only_pon:
         tmp_list = temp("oncotator_Tp_tmp/{tsample}_PON_{panel_of_normal}_Tp_oncotator_tmp.list")
     params:
         queue = "shortq",
-        merge_oncotator = config["APP_MERGE_ONCOTATOR"]
+        merge = config["oncotator"]["scripts"]["merge_oncotator"],
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 10240
     log:
         "logs/merge_oncotator/{tsample}_PON_{panel_of_normal}_annotated_Tp.log"
     shell :
@@ -108,12 +107,12 @@ rule oncotator_reformat_tumor_only_pon:
         "logs/oncotator/{tsample}_PON_{panel_of_normal}_Tp_selection.txt"
     params:
         queue = "shortq",
-        oncotator_extract_Tonly = config["APP_ONCOTATOR_EXTRACT_TUMOR_ONLY"]
+        extract = config["oncotator"]["scripts"]["extract_tumor_only"],
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 10240
     shell:
-        'python2.7 {params.oncotator_extract_Tonly} {input.maf} {output.maf} {output.tsv} 2> {log}'
+        'python2.7 {params.extract} {input.maf} {output.maf} {output.tsv} 2> {log}'
 
 ## A rule to simplify oncotator output on tumor only samples with pon
 rule oncotator_with_pileup_tumor_only_pon:
@@ -126,10 +125,10 @@ rule oncotator_with_pileup_tumor_only_pon:
         "logs/oncotator/{tsample}_PON_{panel_of_normal}_Tp_with_pileup.txt"
     params:
         queue = "shortq",
-        oncotator_cross_pileup = config["APP_ONCOTATOR_X_PILEUP"]
+        oncotator_cross_pileup = config["oncotator"]["scripts"]["pileup"],
     threads : 1
     resources:
-        mem_mb = 500
+        mem_mb = 10240
     shell:
         'python {params.oncotator_cross_pileup} {input.pileup} {input.tsv} {output.tsv}'
         
@@ -143,12 +142,12 @@ rule oncotator_with_COSMIC_tumor_only_pon:
         "logs/oncotator/{tsample}_PON_{panel_of_normal}_Tp_with_COSMIC.txt"
     params:
         queue = "shortq",
-        oncotator_cross_cosmic = config["APP_ONCOTATOR_X_COSMIC_T_ONLY"],
-        cosmic_mutation = config["COSMIC_MUTATION"],
-        cancer_census_oncogene = config["CANCER_CENSUS_ONCOGENE"],
-        cancer_census_tumorsupressor = config["CANCER_CENSUS_TUMORSUPRESSOR"]
+        cross_cosmic    = config["oncotator"]["scripts"]["cosmic_t_only"],
+        cosmic_mutation = config["oncotator"][config["samples"]]["cosmic_mutation"],
+        cancer_census_oncogene = config["oncotator"][config["samples"]]["cancer_census_oncogene"],
+        cancer_census_tumorsupressor = config["oncotator"][config["samples"]]["cancer_census_tumorsupressor"]
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 10240
     shell:
         'python2.7 {params.oncotator_cross_cosmic}  {input.tsv} {output.tsv} {params.cosmic_mutation} {params.cancer_census_oncogene} {params.cancer_census_tumorsupressor} 2> {log}'
