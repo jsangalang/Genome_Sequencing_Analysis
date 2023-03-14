@@ -102,6 +102,16 @@
 
     "bcftools": {
         "app":"~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/bcftools",
+        "humain": {
+            "exom_bed": "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/bed_for_mutect2/S07604514_Padded_b37.bed",
+        },
+        "mouse": {
+            "exom_bed": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.bed",
+        },
+    },
+
+    "vcfsort": {
+        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/vcfsort",
     },
 
     "cnv_facets":{
@@ -114,10 +124,6 @@
     	    "cval": "25 400",
             "ref": "mm9",
         }, 
-    },
-
-    "JAVA": {
-        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/java",
     },
 
     "mosdepth": {
@@ -154,24 +160,16 @@
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/picard",
     },
 
-    "VCFSORT": {
-        "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/vcfsort",
-    },
 
-
-    "Humain_EXOM_BED"                                          : "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/bed_for_mutect2/S07604514_Padded_b37.bed",
     "Humain_GENOME_2BIT"                                       : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/human_g1k_v37.2bit",
     "Humain_MAX_ALT_ALLELES_IN_NORMAL_COUNT"                   : "0",
     "Humain_ONCOGENES_DB"                                      : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_oncogene_IDs.tsv",
     "Humain_TUMOR_SUPRESSOR_DB"                                : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_tumor_supressor_genes_IDs.ts",
 
-    "Mouse_EXOM_BED"                                          : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.bed",
+    
     "Mouse_GENOME_2BIT"                                       : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/bwa_mm9_from_sanger/NCBIM37_um.fa",
     "Mouse_MAX_ALT_ALLELES_IN_NORMAL_COUNT"                   : "0",
     "Mouse_ONCOGENES_DB"                                      : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_oncogene_IDs.tsv",
-    "Mouse_ONCOTATOR_ENV"                                     : "/data/ipadioleau/opt/oncotator-1.9.9.0/bin/activate",
-
-    "Mouse_STAR_INDEX"                                        : "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/STAR_2_6_index/",
     "Mouse_TUMOR_SUPRESSOR_DB"                                : "/mnt/beegfs/userdata/i_padioleau/genome_data/cosmic/cancer_gene_census_hg19_tumor_supressor_genes_IDs.tsv"
 
 }
