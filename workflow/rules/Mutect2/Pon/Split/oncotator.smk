@@ -28,12 +28,12 @@ rule samtools_mpileup_pon:
     params:
         queue = "mediumq",
         samtools = config["samtools"]["app"],
-        GENOME_REF_FASTA = config["gatk"][config["samples"]]["genome_fasta"],
-    threads : 1
+        genome_ref_fasta = config["gatk"][config["samples"]]["genome_fasta"],
+    threads : 8
     resources:
-        mem_mb = 10240
+        mem_mb = 20480
     shell:
-        '{params.samtools} mpileup -a -B -l {input.BED} -f {params.GENOME_REF_FASTA} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
+        '{params.samtools} mpileup -@ {threads} -a -B -l {input.BED} -f {params.genome_ref_fasta} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
 
 ## A rule to split mutect2 results in pieces 
 rule split_Mutect2_pon:
@@ -67,13 +67,14 @@ rule oncotator_pon:
         queue = "mediumq",
         oncotator = config["oncotator"]["app"],
         oncotator_db = config["oncotator"][config["samples"]]["DB"],
+        ref   = config["oncotator"][config["samples"]]["ref"],
     log:
         "logs/oncotator_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_ON_{interval}_annotated_TvNp.TCGAMAF.log"
     threads : 1
     resources:
         mem_mb = 10240
     shell:
-        '{params.oncotator} --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={params.oncotator_db} {input.interval_vcf} {output.MAF} hg19 2> {log}'
+        '{params.oncotator} --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={params.oncotator_db} {input.interval_vcf} {output.MAF} {params.ref} 2> {log}'
 
 # concatenate oncotator TvN_pon
 rule concatenate_oncotator_pon:
@@ -84,10 +85,10 @@ rule concatenate_oncotator_pon:
         tmp_list = temp("oncotator_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_oncotator_tmp.list")
     params:
         queue = "shortq",
-        merge_oncotator = config["APP_MERGE_ONCOTATOR"]
+        merge = config["oncotator"]["scripts"]["merge_oncotator"],
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 10240
     log:
         "logs/merge_oncotator/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp.vcf.log"
     shell :
@@ -105,12 +106,12 @@ rule oncotator_reformat_TvN_pon:
         "logs/oncotator_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_selection.txt"
     params:
         queue = "shortq",
-        oncotator_extract_TvN = config["APP_ONCOTATOR_EXTRACT_TUMOR_VS_NORMAL"]
+        extract = config["oncotator"]["scripts"]["extract_tumor_vs_normal"]
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 10240
     shell:
-        'python2.7 {params.oncotator_extract_TvN} {input.maf} {output.maf} {output.tsv} 2> {log}'
+        'python2.7 {params.extract} {input.maf} {output.maf} {output.tsv} 2> {log}'
 
 ## A rule to simplify oncotator output on tumor vs normal samples with panel of normal
 rule oncotator_with_pileup_TvN_pon:
@@ -123,10 +124,10 @@ rule oncotator_with_pileup_TvN_pon:
         "logs/oncotator/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_with_pileup.txt"
     params:
         queue = "shortq",
-        oncotator_cross_pileup = config["APP_ONCOTATOR_X_PILEUP"]
+        oncotator_cross_pileup = config["oncotator"]["scripts"]["pileup"],
     threads : 1
     resources:
-        mem_mb = 500
+        mem_mb = 10240
     shell:
         'python {params.oncotator_cross_pileup} {input.pileup} {input.tsv} {output.tsv}'
 
@@ -140,13 +141,13 @@ rule oncotator_with_COSMIC_TvN_pon:
         "logs/oncotator/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_with_COSMIC.txt"
     params:
         queue = "shortq",
-        oncotator_cross_cosmic = config["APP_ONCOTATOR_X_COSMIC_T_N"],
-        cosmic_mutation = config["COSMIC_MUTATION"],
-        cancer_census_oncogene = config["CANCER_CENSUS_ONCOGENE"],
-        cancer_census_tumorsupressor = config["CANCER_CENSUS_TUMORSUPRESSOR"]
+        cross_cosmic    = config["oncotator"]["scripts"]["cosmic_t_n"],
+        cosmic_mutation = config["oncotator"][config["samples"]]["cosmic_mutation"],
+        cancer_census_oncogene = config["oncotator"][config["samples"]]["cancer_census_oncogene"],
+        cancer_census_tumorsupressor = config["oncotator"][config["samples"]]["cancer_census_tumorsupressor"]
     threads : 1
     resources:
-        mem_mb = 10000
+        mem_mb = 10240
     shell:
         'python2.7 {params.oncotator_cross_cosmic} {input.tsv} {output.tsv} {params.cosmic_mutation} {params.cancer_census_oncogene} {params.cancer_census_tumorsupressor} 2> {log}'
 
