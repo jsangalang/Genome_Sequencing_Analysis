@@ -111,7 +111,7 @@ rule Filter_By_Orientation_Bias:
         filtered_vcf_index = "Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz.tbi"
     params:
         queue = "mediumq",
-        gatk = config["APP_GATK"]
+        gatk = config["gatk"]["app"],
     log:
         "logs/filter_Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz.log"
     threads : 4
