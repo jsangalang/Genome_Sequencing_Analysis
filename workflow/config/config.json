@@ -1,5 +1,5 @@
 {
-    "samples" : "humain",
+    "samples" : "human",
     "seq_type": "WGS",
     "paired": True,
     "remove_duplicates": True,
@@ -16,7 +16,7 @@
 
     "bwa": {
         "app": "/mnt/beegfs/software/bwa/2.2.1/bin/bwa-mem2",
-        "humain": {
+        "human": {
             "index": "/mnt/beegfs/scratch/Lg_PANUNZI/Konstantin/gatk/human_g1k_v37.fasta",
         },
         "mouse": {
@@ -33,7 +33,7 @@
         "scripts": {
             "reformat_mutect2": "/mnt/beegfs/userdata/i_padioleau/code/reformat_mutect2_vcf_for_oncotator_input_GATK_4_1_8_1.py",
         },
-        "humain": {
+        "human": {
             "target_interval": " -L 1",
             "genome_fasta": "/mnt/beegfs/scratch/Lg_PANUNZI/Konstantin/gatk/human_g1k_v37.fasta",
             "gnomad_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/af-only-gnomad.raw.sites.b37.vcf.gz",
@@ -69,7 +69,7 @@
 
     "facet_snp_pileup": {
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/snp-pileup",
-        "humain": {
+        "human": {
             "facet_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/af-only-gnomad.raw.sites.b37.vcf.gz",
         },
         "mouse": {
@@ -87,13 +87,17 @@
 
     "annovar": {
         "app": "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/table_annovar.pl",
-        "humain": {
+        "human": {
             "ref": "hg19",
             "DB": "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/humandb/",
+            "protocols": "refGene,avsnp150,gnomad211_genome,gnomad211_exome,gme,mcap,revel,regsnpintron,gerp++gt2,clinvar_20200316,intervar_20180118,popfreq_max_20150413,dbnsfp35a,cosmic70,icgc21",
+            "operations": "g,f,f,f,f,f,f,f,f,f,f,f,f,f,f",
         },
         "mouse": {
             "ref": "mm9",
             "DB": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/annovardb/",
+            "protocols": "",
+            "operations": "",
         },
     },
 
@@ -103,7 +107,7 @@
 
     "bcftools": {
         "app":"~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/bcftools",
-        "humain": {
+        "human": {
             "exom_bed": "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/bed_for_mutect2/S07604514_Padded_b37.bed",
         },
         "mouse": {
@@ -117,7 +121,7 @@
 
     "cnv_facets":{
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/cnv_facets.R",
-        "humain": {
+        "human": {
             "cval": "25 400",
             "ref": "hg19",
         }, 
@@ -133,7 +137,7 @@
 
     "oncotator": {
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/oncotator",
-        "humain": {
+        "human": {
             "ref": "hg19",
             "DB": "/mnt/beegfs/userdata/i_padioleau/genome_data/oncotator/oncotator_v1_ds_April052016",
             "cosmic_mutation": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/databases/CosmicMutant_count.tsv",

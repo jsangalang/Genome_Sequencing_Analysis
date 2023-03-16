@@ -29,11 +29,11 @@ rule samtools_mpileup:
         queue = "mediumq",
         samtools = config["samtools"]["app"],
         genome_ref_fasta = config["gatk"][config["samples"]]["genome_fasta"],
-    threads : 8
+    threads : 1
     resources:
         mem_mb = 20480
     shell:
-        '{params.samtools} mpileup -@ {threads} -a -B -l {input.BED} -f {params.genome_ref_fasta} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
+        '{params.samtools} mpileup -a -B -l {input.BED} -f {params.genome_ref_fasta} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
 
 ## A rule to split mutect2 results in pieces 
 rule split_Mutect2:

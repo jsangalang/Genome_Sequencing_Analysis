@@ -4,17 +4,27 @@ rule annovar:
         vcf = "haplotype_caller_filtered/{nsample}_germline_variants_filtered.vcf.gz"
     output:
         avinput = "annovar/{nsample}.avinput",
-        txt = "annovar/{nsample}.hg19_multianno.txt",
-        vcf = "annovar/{nsample}.hg19_multianno.vcf"
+        txt = "annovar/{nsample}.multianno.txt",
+        vcf = "annovar/{nsample}.multianno.vcf",
     params:
-        queue = "mediumq",
-        annovar = config["annovar"]["app"],
-        annovar_db = config["annovar"][config["samples"]]["DB"],
+        queue    = "mediumq",
+        annovar  = config["annovar"]["app"],
+        ref      = config["annovar"][config["samples"]]["ref"],
+        DB       = config["annovar"][config["samples"]]["DB"],
+        protocol = config["annovar"][config["samples"]]["protocols"],
+        operation= config["annovar"][config["samples"]]["operations"],
     threads : 4
     resources:
         mem_mb = 10240
     log:
         "logs/annovar/{nsample}.log"
     shell :
-        "{params.annovar} {input.vcf} {params.annovar_db}  --thread {threads} --maxgenethread 4 -buildver hg19 -out annovar/{wildcards.nsample} -remove -protocol refGene,avsnp150,gnomad211_genome,gnomad211_exome,gme,mcap,revel,regsnpintron,gerp++gt2,clinvar_20200316,intervar_20180118,popfreq_max_20150413,dbnsfp35a,cosmic70,icgc21 -operation g,f,f,f,f,f,f,f,f,f,f,f,f,f,f -nastring . -vcfinput 2> {log}"
+        "{params.annovar} {input.vcf} {params.DB} "
+        " --thread {threads} --maxgenethread 4 "
+        " -buildver hg19 "
+        " -out annovar/{wildcards.nsample} "
+        " -remove "
+        " -protocol {params.protocol} "
+        " -operation {params.operation} "
+        " -nastring . -vcfinput 2> {log} "
 

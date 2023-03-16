@@ -47,12 +47,12 @@ rule index_exom_mutect2:
     params:
         queue = "shortq",
         gatk = config["gatk"]["app"],
-    threads : 1
+    threads: 1
     resources:
         mem_mb = 10240
     conda: "pipeline_GATK_2.1.4_V2"
     shell:
-        '{params.gatk} IndexFeatureFile -F {input.exom_Mutect2} 2> {log}'
+        '{params.gatk} IndexFeatureFile -I {input.exom_Mutect2} 2> {log}'
 
 # A rule to generate a bed from mutect2 vcf  
 rule get_variant_bed_exom:
@@ -151,9 +151,9 @@ rule oncotator_with_pileup_TvN_exom:
 ## A rule to cross oncotator output on tumor vs normal samples with COSMIC information
 rule oncotator_with_COSMIC_TvN_exom:
     input:
-        tsv = "oncotator_TvN_tsv_pileup_exom/{tsample}_Vs_{nsample}_TvN_with_pileup_exom.tsv"
+        tsv = "oncotator_TvN_tsv_pileup_exom/{tsample}_Vs_{nsample}_TvN_with_pileup_exom.tsv",
     output:
-        tsv = "oncotator_TvN_tsv_COSMIC_exom/{tsample}_Vs_{nsample}_TvN_with_COSMIC_exom.tsv"
+        tsv = "oncotator_TvN_tsv_COSMIC_exom/{tsample}_Vs_{nsample}_TvN_with_COSMIC_exom.tsv",
     log:
         "logs/oncotator_exom/{tsample}_Vs_{nsample}_TvN_with_COSMIC_exom.txt"
     params:
@@ -161,7 +161,7 @@ rule oncotator_with_COSMIC_TvN_exom:
         oncotator_cross_cosmic = config["oncotator"]["scripts"]["cosmic_t_n"],
         cosmic_mutation = config["oncotator"][config["samples"]]["cosmic_mutation"],
         cancer_census_oncogene = config["oncotator"][config["samples"]]["cancer_census_oncogene"],
-        cancer_census_tumorsupressor = config["oncotator"][config["samples"]]["cancer_census_tumorsupressor"]
+        cancer_census_tumorsupressor = config["oncotator"][config["samples"]]["cancer_census_tumorsupressor"],
     threads : 1
     resources:
         mem_mb = 10240

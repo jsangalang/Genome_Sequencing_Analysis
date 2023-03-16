@@ -1,10 +1,11 @@
 import os
+import csv
 
 ## load json configuration file
+print("[message] Loading configuration file")
 configfile: "workflow/config/config.json"
 
-print(config["samples"])
-print(config["seq_type"])
+print("[message] Starting %s analysis pipeline for %s samples"%(config["seq_type"],config["samples"]))
 
 ## Tumor vs Normal mode by default
 TUMOR_ONLY = False
@@ -19,63 +20,128 @@ TUMOR_ONLY = False
 mutect_intervals, = glob_wildcards(config["gatk"][config["samples"]][config["seq_type"]]["mutect_interval_dir"] + "/{interval}.bed")
 
 ## Get all fastq
-FASTQ_SAMPLES = glob_wildcards("DNA_samples/{name}.fastq.gz")
+FASTQ_SAMPLES, = glob_wildcards("DNA_samples/{name}.fastq.gz")
 
 TSAMPLE = []
 NSAMPLE = []
 
 ## Collecting information on files to produce
-MUTECT2_SAMPLES = []
-MUTECT2_FOR_PON_SAMPLES = []
-
-FACETS_SAMPLES = []
+FACETS_SAMPLES     = []
 CNV_FACETS_SAMPLES = []
 
+MUTECT2_SAMPLES   = []
 ONCOTATOR_SAMPLES = []
 ONCOTATOR_EXOM_SAMPLES = []
+ANNOVAR_SAMPLES   = []
 
-if os.path.isfile("variant_call_list.tsv") :
-    with open("variant_call_list.tsv",'r')  as SAMPLE_INPUT_LIST: 
-        for line in SAMPLE_INPUT_LIST :
-            tmp = line.strip().split('\t')
-            if len(tmp)==2:
-                tsample = tmp[0]
-                nsample = tmp[1]
+def build_TvN_targets(tsample, nsample):
+    FACETS_SAMPLES.append("facets/" + tsample + "_Vs_" + nsample + "_facets_cval500.pdf")
+    CNV_FACETS_SAMPLES.append("cnv_facets/" + tsample + "_Vs_" + nsample + ".vcf.gz")
 
-                TSAMPLE.append(tsample)
-                NSAMPLE.append(nsample)
+    MUTECT2_SAMPLES.append("Mutect2_TvN/" + tsample + "_Vs_" + nsample + "_twicefiltered_TvN.vcf.gz")
 
-                FACETS_SAMPLES.append("facets/" + tsample + "_Vs_" + nsample + "_facets_cval500.pdf")
-                CNV_FACETS_SAMPLES.append("cnv_facets/" + tsample + "_Vs_" + nsample + ".vcf.gz")
+    if config["samples"] == "human":
+        ONCOTATOR_SAMPLES.append("oncotator_TvN_tsv_COSMIC/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC.tsv")
 
-                MUTECT2_SAMPLES.append("Mutect2_TvN/" + tsample + "_Vs_" + nsample + "_twicefiltered_TvN.vcf.gz")
-                if config["samples"] == "humain":
-                    ONCOTATOR_SAMPLES.append("oncotator_TvN_tsv_COSMIC/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC.tsv")
-                    if config["seq_type"] == "WES":
-                        ONCOTATOR_EXOM_SAMPLES.append("oncotator_TvN_tsv_COSMIC_exom/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC_exom.tsv")
+        if config["seq_type"] == "WGS":
+            ONCOTATOR_EXOM_SAMPLES.append("oncotator_TvN_tsv_COSMIC_exom/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC_exom.tsv")
+
+    elif config["samples"] == "mouse":
+        ANNOVAR_SAMPLES.append("annovar_mutect2_TvN/" + tsample + "_Vs_" + nsample + ".avinput")
+
+def build_Tp_targets(tsample, PoN):
+    MUTECT2_SAMPLES.append("Mutect2_Tp/" + tsample + "_PON_" + Pon + "_twicefiltered_Tp.vcf.gz")
+    
+    if config["samples"] == "human":
+        ONCOTATOR_SAMPLES.append("oncotator_Tp_tsv_COSMIC/" + tsample  + "_PON_" + PoN + "_Tp_with_COSMIC.tsv")
+        
+        if config["seq_type"] == "WGS":
+            ONCOTATOR_EXOM_SAMPLES.append("oncotator_Tp_tsv_COSMIC_exom/" + tsample  + "_PON_" + PoN + "_Tp_with_COSMIC_exom.tsv")
+            
+    elif config["samples"] == "mouse":
+        ANNOVAR_SAMPLES.append("annovar_mutect2_Tp/" + tsample + "_PON_" + PoN + ".avinput")
+  
+
+def build_TvNp_targets(tsample, nsample, PoN):
+    FACETS_SAMPLES.append("facets/" + tsample + "_Vs_" + nsample + "_facets_cval500.pdf")
+    CNV_FACETS_SAMPLES.append("cnv_facets/" + tsample + "_Vs_" + nsample + ".vcf.gz")
+
+    MUTECT2_SAMPLES.append("Mutect2_TvNp/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + "_twicefiltered_TvNp.vcf.gz")
+
+    if config["samples"] == "human":
+        ONCOTATOR_SAMPLES.append("oncotator_TvNp_tsv_COSMIC/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + "_TvNp_with_COSMIC.tsv")
+
+        if config["seq_type"] == "WGS":
+            ONCOTATOR_EXOM_SAMPLES.append("oncotator_TvNp_tsv_COSMIC_exom/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + "_TvNp_with_COSMIC_exom.tsv")
+
+    elif config["samples"] == "mouse":
+        ANNOVAR_SAMPLES.append("annovar_mutect2_TvN_pon/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + + ".avinput")
+
+def build_Tonly_targets(tsample):
+    MUTECT2_SAMPLES.append("Mutect2_T/" + tsample+ "_tumor_only_T.vcf.gz")
+
+    if config["samples"] == "human":
+        ONCOTATOR_SAMPLES.append("oncotator_T_tsv_COSMIC/" + tsample + "_tumor_only_T_with_COSMIC.tsv")
+
+        if config["seq_type"] == "WGS":
+            ONCOTATOR_EXOM_SAMPLES.append("oncotator_T_tsv_COSMIC_exom/" + tsample + "_tumor_only_T_with_COSMIC_exom.tsv")
+
+    elif config["samples"] == "mouse":
+        ANNOVAR_SAMPLES.append("annovar_mutect2_T/" + tsample  + ".avinput")
+            
+if os.path.isfile("variant_call_list.tsv"):
+    with open("variant_call_list.tsv",'r')  as fd: 
+        rd = csv.reader(fd, delimiter="\t", quotechar='"')
+        for row in rd:
+            tsample = row[0]
+            nsample = row[1]
+            TSAMPLE.append(tsample)
+            NSAMPLE.append(nsample)
+            build_TvN_targets(tsample, nsample)
+
+elif os.path.isfile("variant_call_list_Tp.tsv"):
+    with open("variant_call_list.tsv",'r')  as fd: 
+        rd = csv.reader(fd, delimiter="\t", quotechar='"')
+        for row in rd:
+            tsample = row[0]
+            PoN = row[1]
+            TSAMPLE.append(tsample)
+            build_Tp_targets(tsample, PoN)
+
+elif os.path.isfile("variant_call_list_TvNp.tsv"):
+    with open("variant_call_list.tsv",'r')  as fd: 
+        rd = csv.reader(fd, delimiter="\t", quotechar='"')
+        for row in rd:
+            tsample = row[0]
+            nsample = row[1]
+            PoN     = row[2]
+            TSAMPLE.append(tsample)
+            NSAMPLE.append(nsample)
+            build_TvNp_targets(tsample, nsample, PoN)
 
 else: 
     TUMOR_ONLY = True
-    TSAMPLE,PAIRED = glob_wildcards("DNA_samples/{tsample,.+}_{paired,[012]}.fastq.gz")
+    TSAMPLE, PAIRED = glob_wildcards("DNA_samples/{tsample,.+}_{paired,[012]}.fastq.gz")
+    for tsample in TSAMPLE:
+        build_Tonly_target(tsample)
         
 rule all:
     input:
-        expand('fastq_QC_raw/{fastq_sample}_fastqc.html', fastq_sample = FASTQ_SAMPLES.name),
-        expand('fastq_QC_clean/{fastq_sample}_fastqc.html', fastq_sample =  FASTQ_SAMPLES.name),
+        expand('fastq_QC_raw/{fastq_sample}_fastqc.html', fastq_sample = FASTQ_SAMPLES),
+        expand('fastq_QC_clean/{fastq_sample}_fastqc.html', fastq_sample =  FASTQ_SAMPLES),
         expand('bam/{sample}.nodup.recal.bam', sample =  NSAMPLE + TSAMPLE),
         # expand("BQSR/{sample}_BQSR_report.pdf", sample = TSAMPLE + NSAMPLE),
-        expand("annovar/{sample}.avinput", sample = NSAMPLE + TSAMPLE ),
         expand(FACETS_SAMPLES),
         expand(CNV_FACETS_SAMPLES),
+        expand("haplotype_caller_filtered/{sample}_germline_variants_filtered.vcf.gz", sample = NSAMPLE + TSAMPLE),
+        expand("annovar/{sample}.avinput", sample = NSAMPLE + TSAMPLE if config["samples"] == "human" else []),
         expand('mapping_QC/HsMetrics/{sample}_HsMetrics.tsv', sample = TSAMPLE + NSAMPLE),
         expand("mapping_QC/flagstat/{sample}_flagstat.txt",   sample = TSAMPLE + NSAMPLE),
         expand("mapping_QC/mosdepth/{sample}.mosdepth.global.dist.txt", sample = TSAMPLE + NSAMPLE),
-        # expand("haplotype_caller/{sample}_germline_variants.vcf.gz", sample = NSAMPLE),
         expand(MUTECT2_SAMPLES),
         expand(ONCOTATOR_SAMPLES),
         expand(ONCOTATOR_EXOM_SAMPLES),
-        expand(MUTECT2_FOR_PON_SAMPLES),
-
+        expand(ANNOVAR_SAMPLES),
 
 ######## clean fastq files with fastp ########
 include: "rules/Fastp/fastp.smk"
@@ -96,13 +162,14 @@ if TUMOR_ONLY == False:
     include: "rules/Facets/facets.smk"
     include: "rules/Facets/cnvFacets.smk"
 
-######## Annovar ########
+######## HaplotypeCaller and Annovar ########
 if TUMOR_ONLY == False:
     ## Call germline SNPs and indels via local re-assembly of haplotypes
-    include: "rules/Annovar/haplotypeCaller.smk"
+    include: "rules/HaplotypeCaller/haplotypeCaller.smk"
+    
     ## Annovar on Haplotype caller 
     include: "rules/Annovar/annovar.smk"
-
+    
 ######## Mapping QC ########
 
 ## check mapping stats, with GATK CollectHsMetrics
@@ -124,7 +191,7 @@ include: "rules/Mutect2/Common/estiContamination.smk"
 if TUMOR_ONLY == False:
     include: "rules/Mutect2/Std/mutect2.smk"
     
-    if config["samples"] == "humain":
+    if config["samples"] == "human":
         include: "rules/Mutect2/Std/Split/oncotator.smk"
 
         if config["seq_type"] == "WGS":
@@ -136,7 +203,7 @@ if TUMOR_ONLY == False:
     ## Tumor vs Normal with panel of normals (PON)
     include: "rules/Mutect2/Pon/mutect2.smk"
 
-    if config["samples"] == "humain":
+    if config["samples"] == "human":
         include: "rules/Mutect2/Pon/Split/oncotator.smk"
         
         if config["seq_type"] == "WGS":
@@ -146,8 +213,9 @@ if TUMOR_ONLY == False:
 elif TUMOR_ONLY == True: 
     include: "rules/Mutect2/TumorOnly/mutect2.smk"
 
-    if config["samples"] == "humain":
+    if config["samples"] == "human":
         include: "rules/Mutect2/TumorOnly/Split/oncotator.smk"
+
         if config["seq_type"] == "WGS":
             include: "rules/Mutect2/TumorOnly/Exom/oncotator.smk"
     
@@ -157,7 +225,7 @@ elif TUMOR_ONLY == True:
     ## Tumor Only with panel of normals (PON)
     include: "rules/Mutect2/TumorOnlyPon/mutect2.smk"
 
-    if config["samples"] == "humain":
+    if config["samples"] == "human":
         include: "rules/Mutect2/TumorOnlyPon/Split/oncotator.smk"
         
         if config["seq_type"] == "WGS":
