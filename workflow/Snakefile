@@ -26,71 +26,71 @@ TSAMPLE = []
 NSAMPLE = []
 
 ## Collecting information on files to produce
-FACETS_SAMPLES     = []
-CNV_FACETS_SAMPLES = []
+FACETS     = []
+CNV_FACETS = []
 
-MUTECT2_SAMPLES   = []
-ONCOTATOR_SAMPLES = []
-ONCOTATOR_EXOM_SAMPLES = []
-ANNOVAR_SAMPLES   = []
+MUTECT2   = []
+ONCOTATOR = []
+ONCOTATOR_EXOM = []
+ANNOVAR   = []
 
 def build_TvN_targets(tsample, nsample):
-    FACETS_SAMPLES.append("facets/" + tsample + "_Vs_" + nsample + "_facets_cval500.pdf")
-    CNV_FACETS_SAMPLES.append("cnv_facets/" + tsample + "_Vs_" + nsample + ".vcf.gz")
+    FACETS.append("facets/" + tsample + "_Vs_" + nsample + "_facets_cval500.pdf")
+    CNV_FACETS.append("cnv_facets/" + tsample + "_Vs_" + nsample + ".vcf.gz")
 
-    MUTECT2_SAMPLES.append("Mutect2_TvN/" + tsample + "_Vs_" + nsample + "_twicefiltered_TvN.vcf.gz")
+    MUTECT2.append("Mutect2_TvN/" + tsample + "_Vs_" + nsample + "_twicefiltered_TvN.vcf.gz")
 
     if config["samples"] == "human":
-        ONCOTATOR_SAMPLES.append("oncotator_TvN_tsv_COSMIC/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC.tsv")
+        ONCOTATOR.append("oncotator_TvN_tsv_COSMIC/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC.tsv")
 
         if config["seq_type"] == "WGS":
-            ONCOTATOR_EXOM_SAMPLES.append("oncotator_TvN_tsv_COSMIC_exom/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC_exom.tsv")
+            ONCOTATOR_EXOM.append("oncotator_TvN_tsv_COSMIC_exom/" + tsample + "_Vs_" + nsample + "_TvN_with_COSMIC_exom.tsv")
 
     elif config["samples"] == "mouse":
-        ANNOVAR_SAMPLES.append("annovar_mutect2_TvN/" + tsample + "_Vs_" + nsample + ".avinput")
+        ANNOVAR.append("annovar_mutect2_TvN/" + tsample + "_Vs_" + nsample + ".avinput")
 
 def build_Tp_targets(tsample, PoN):
-    MUTECT2_SAMPLES.append("Mutect2_Tp/" + tsample + "_PON_" + Pon + "_twicefiltered_Tp.vcf.gz")
+    MUTECT2.append("Mutect2_Tp/" + tsample + "_PON_" + Pon + "_twicefiltered_Tp.vcf.gz")
     
     if config["samples"] == "human":
-        ONCOTATOR_SAMPLES.append("oncotator_Tp_tsv_COSMIC/" + tsample  + "_PON_" + PoN + "_Tp_with_COSMIC.tsv")
+        ONCOTATOR.append("oncotator_Tp_tsv_COSMIC/" + tsample  + "_PON_" + PoN + "_Tp_with_COSMIC.tsv")
         
         if config["seq_type"] == "WGS":
-            ONCOTATOR_EXOM_SAMPLES.append("oncotator_Tp_tsv_COSMIC_exom/" + tsample  + "_PON_" + PoN + "_Tp_with_COSMIC_exom.tsv")
+            ONCOTATOR_EXOM.append("oncotator_Tp_tsv_COSMIC_exom/" + tsample  + "_PON_" + PoN + "_Tp_with_COSMIC_exom.tsv")
             
     elif config["samples"] == "mouse":
-        ANNOVAR_SAMPLES.append("annovar_mutect2_Tp/" + tsample + "_PON_" + PoN + ".avinput")
+        ANNOVAR.append("annovar_mutect2_Tp/" + tsample + "_PON_" + PoN + ".avinput")
   
 
 def build_TvNp_targets(tsample, nsample, PoN):
-    FACETS_SAMPLES.append("facets/" + tsample + "_Vs_" + nsample + "_facets_cval500.pdf")
-    CNV_FACETS_SAMPLES.append("cnv_facets/" + tsample + "_Vs_" + nsample + ".vcf.gz")
+    FACETS.append("facets/" + tsample + "_Vs_" + nsample + "_facets_cval500.pdf")
+    CNV_FACETS.append("cnv_facets/" + tsample + "_Vs_" + nsample + ".vcf.gz")
 
-    MUTECT2_SAMPLES.append("Mutect2_TvNp/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + "_twicefiltered_TvNp.vcf.gz")
+    MUTECT2.append("Mutect2_TvNp/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + "_twicefiltered_TvNp.vcf.gz")
 
     if config["samples"] == "human":
-        ONCOTATOR_SAMPLES.append("oncotator_TvNp_tsv_COSMIC/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + "_TvNp_with_COSMIC.tsv")
+        ONCOTATOR.append("oncotator_TvNp_tsv_COSMIC/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + "_TvNp_with_COSMIC.tsv")
 
         if config["seq_type"] == "WGS":
-            ONCOTATOR_EXOM_SAMPLES.append("oncotator_TvNp_tsv_COSMIC_exom/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + "_TvNp_with_COSMIC_exom.tsv")
+            ONCOTATOR_EXOM.append("oncotator_TvNp_tsv_COSMIC_exom/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + "_TvNp_with_COSMIC_exom.tsv")
 
     elif config["samples"] == "mouse":
-        ANNOVAR_SAMPLES.append("annovar_mutect2_TvN_pon/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + + ".avinput")
+        ANNOVAR.append("annovar_mutect2_TvN_pon/" + tsample + "_Vs_" + nsample + "_PON_" + PoN + + ".avinput")
 
 def build_Tonly_targets(tsample):
-    MUTECT2_SAMPLES.append("Mutect2_T/" + tsample+ "_tumor_only_T.vcf.gz")
+    MUTECT2.append("Mutect2_T/" + tsample+ "_tumor_only_T.vcf.gz")
 
     if config["samples"] == "human":
-        ONCOTATOR_SAMPLES.append("oncotator_T_tsv_COSMIC/" + tsample + "_tumor_only_T_with_COSMIC.tsv")
+        ONCOTATOR.append("oncotator_T_tsv_COSMIC/" + tsample + "_tumor_only_T_with_COSMIC.tsv")
 
         if config["seq_type"] == "WGS":
-            ONCOTATOR_EXOM_SAMPLES.append("oncotator_T_tsv_COSMIC_exom/" + tsample + "_tumor_only_T_with_COSMIC_exom.tsv")
+            ONCOTATOR_EXOM.append("oncotator_T_tsv_COSMIC_exom/" + tsample + "_tumor_only_T_with_COSMIC_exom.tsv")
 
     elif config["samples"] == "mouse":
-        ANNOVAR_SAMPLES.append("annovar_mutect2_T/" + tsample  + ".avinput")
+        ANNOVAR.append("annovar_mutect2_T/" + tsample  + ".avinput")
             
-if os.path.isfile("variant_call_list.tsv"):
-    with open("variant_call_list.tsv",'r')  as fd: 
+if os.path.isfile("variant_call_list_TvN.tsv"):
+    with open("variant_call_list_TvN.tsv",'r') as fd: 
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
         for row in rd:
             tsample = row[0]
@@ -100,7 +100,7 @@ if os.path.isfile("variant_call_list.tsv"):
             build_TvN_targets(tsample, nsample)
 
 elif os.path.isfile("variant_call_list_Tp.tsv"):
-    with open("variant_call_list.tsv",'r')  as fd: 
+    with open("variant_call_list_Tp.tsv",'r') as fd: 
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
         for row in rd:
             tsample = row[0]
@@ -109,7 +109,7 @@ elif os.path.isfile("variant_call_list_Tp.tsv"):
             build_Tp_targets(tsample, PoN)
 
 elif os.path.isfile("variant_call_list_TvNp.tsv"):
-    with open("variant_call_list.tsv",'r')  as fd: 
+    with open("variant_call_list_TvNp.tsv",'r') as fd: 
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
         for row in rd:
             tsample = row[0]
@@ -131,17 +131,17 @@ rule all:
         expand('fastq_QC_clean/{fastq_sample}_fastqc.html', fastq_sample =  FASTQ_SAMPLES),
         expand('bam/{sample}.nodup.recal.bam', sample =  NSAMPLE + TSAMPLE),
         # expand("BQSR/{sample}_BQSR_report.pdf", sample = TSAMPLE + NSAMPLE),
-        expand(FACETS_SAMPLES),
-        expand(CNV_FACETS_SAMPLES),
+        expand(FACETS),
+        expand(CNV_FACETS),
         expand("haplotype_caller_filtered/{sample}_germline_variants_filtered.vcf.gz", sample = NSAMPLE + TSAMPLE),
         expand("annovar/{sample}.avinput", sample = NSAMPLE + TSAMPLE if config["samples"] == "human" else []),
         expand('mapping_QC/HsMetrics/{sample}_HsMetrics.tsv', sample = TSAMPLE + NSAMPLE),
         expand("mapping_QC/flagstat/{sample}_flagstat.txt",   sample = TSAMPLE + NSAMPLE),
         expand("mapping_QC/mosdepth/{sample}.mosdepth.global.dist.txt", sample = TSAMPLE + NSAMPLE),
-        expand(MUTECT2_SAMPLES),
-        expand(ONCOTATOR_SAMPLES),
-        expand(ONCOTATOR_EXOM_SAMPLES),
-        expand(ANNOVAR_SAMPLES),
+        expand(MUTECT2),
+        expand(ONCOTATOR),
+        expand(ONCOTATOR_EXOM),
+        expand(ANNOVAR),
 
 ######## clean fastq files with fastp ########
 include: "rules/Fastp/fastp.smk"
