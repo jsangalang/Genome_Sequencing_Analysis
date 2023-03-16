@@ -29,7 +29,7 @@ $ ln -s /datadir/* .
 ```
 - Step 3. configure workflow
 
-1. If there are both tumor samples and normal samples, then you need create a file **variant_call_list_TvN.tsv** in the project directory. The first column is for the tumor samples, and second column is for the normal samples. Each is a tumor vs normal pair. The seperator is tab. I create a script to generate the table automatically, but anyway you need to verify the generated table before start the pipeline. 
+1. If there are both tumor samples and normal samples, then you need create a file **variant_call_list_TvN.tsv** in the project directory. The first column is for the tumor samples, and second column is for the normal samples. Each row is a tumor vs normal pair. The seperator is tab. 
 
 2. If there are both tumor samples and panel of normal samples, then you need create a file **variant_call_list_Tp.tsv** in the project directory.
 
