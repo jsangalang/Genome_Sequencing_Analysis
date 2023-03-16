@@ -98,11 +98,11 @@ rule filter_mutect_calls:
     resources:
         mem_mb = 40960
     shell:
-        "{params.gatk} --java-options \"-Xmx40g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" FilterMutectCalls"
-        " -V {input.Mutect2_vcf}"
-        " -R {input.index}"
-        " --contamination-table {input.contamination_table}"
-        " -O {output.VCF} 2> {log}"
+        "{params.gatk} --java-options \"-Xmx40g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" FilterMutectCalls "
+        " -V {input.Mutect2_vcf} "
+        " -R {params.index} "
+        " --contamination-table {input.contamination_table} "
+        " -O {output.VCF} 2> {log} "
 
 ## A rule to filter VCF on orientation bias, for OxoG and FFPE, from mutect tumor Vs normal 
 rule Filter_By_Orientation_Bias:

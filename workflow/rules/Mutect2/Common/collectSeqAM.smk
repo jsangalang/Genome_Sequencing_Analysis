@@ -22,6 +22,6 @@ rule Collect_Sequencing_Artifact_Metrics:
         "{params.gatk} --java-options \"-Xmx40g  -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" CollectSequencingArtifactMetrics"
         " -I {input.tumor_bam}"
         " --FILE_EXTENSION \".txt\""
-        " -R {input.index}"
+        " -R {params.index}"
         " -O {params.output_prefix} 2> {log}"
 

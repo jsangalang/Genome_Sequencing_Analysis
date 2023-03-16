@@ -128,7 +128,7 @@ rule base_recalibrator_pass2:
         "BQSR/{sample}_BQSR_pass2.table"
     params:
         queue = "mediumq",
-        gatk = config["gatk"]["app"],
+        gatk  = config["gatk"]["app"],
         target_interval = config["gatk"][config["samples"]]["target_interval"],
         index           = config["gatk"][config["samples"]]["genome_fasta"],
         gnomad_ref      = config["gatk"][config["samples"]]["gnomad_ref"],
@@ -140,8 +140,8 @@ rule base_recalibrator_pass2:
     shell:
         "{params.gatk} --java-options \"-Xmx40g -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp -XX:+UseParallelGC -XX:ParallelGCThreads={threads} \" BaseRecalibrator "
         " -R {params.index}"
-        " {params.target_intervals}"
-        " --known-sites {input.gnomad_ref}"
+        " {params.target_interval}"
+        " --known-sites {params.gnomad_ref}"
         " -I {input.bam}"
         " -O {output} 2> {log}"
 

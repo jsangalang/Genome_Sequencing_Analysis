@@ -3,6 +3,9 @@ import os
 ## load json configuration file
 configfile: "workflow/config/config.json"
 
+print(config["samples"])
+print(config["seq_type"])
+
 ## Tumor vs Normal mode by default
 TUMOR_ONLY = False
 
@@ -60,7 +63,7 @@ rule all:
         expand('fastq_QC_raw/{fastq_sample}_fastqc.html', fastq_sample = FASTQ_SAMPLES.name),
         expand('fastq_QC_clean/{fastq_sample}_fastqc.html', fastq_sample =  FASTQ_SAMPLES.name),
         expand('bam/{sample}.nodup.recal.bam', sample =  NSAMPLE + TSAMPLE),
-        expand("BQSR/{sample}_BQSR_report.pdf", sample = TSAMPLE + NSAMPLE),
+        # expand("BQSR/{sample}_BQSR_report.pdf", sample = TSAMPLE + NSAMPLE),
         expand("annovar/{sample}.avinput", sample = NSAMPLE + TSAMPLE ),
         expand(FACETS_SAMPLES),
         expand(CNV_FACETS_SAMPLES),
