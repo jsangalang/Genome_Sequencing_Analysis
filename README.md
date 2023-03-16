@@ -16,6 +16,10 @@ $ conda env create -f Mouse_env.txt -n Mouse
 $ conda env create -f pipeline_GATK_2.1.4_conda_env.txt -n pipeline_GATK_2.1.4_V2
 ```
 - Step 2. deploy workflow
+
+Create a directory for your project, then create soft links to your datasets in the directory DNA_samples. Please make sure 
+that the name of the files terminated with _0.fastq.gz, _1.fastq.gz or _2.fastq.gz.
+
 ```
 $ cd /mnt/beegfs/scratch/username/yourprojectdir
 $ mkdir projectname
