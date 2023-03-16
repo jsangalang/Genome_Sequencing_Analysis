@@ -39,6 +39,7 @@ $ ln -s /datadir/* .
 
 4. If there are only tumor samples, then the pipeline will run automatically in tumor only mode. 
 ```
+$ cd /mnt/beegfs/scratch/username/yourprojectdir/projectname
 $ emacs -nw variant_call_list_TvN.tsv
 $ cat variant_call_list.tsv
 tumor_sample_A  normal_sample_A
