@@ -38,6 +38,10 @@ $ ln -s /datadir/* .
 3. If there are tumor, normal samples and panel of normal samples, then you need create a file **variant_call_list_TvNp.tsv** in the project directory.
 
 4. If there are only tumor samples, then you don't need to generate any tsv file. The pipeline will run automatically in tumor only mode. 
+
+Then, you need to modify the bash file run.sh. For example, if you need to run WES pipeline for mice samples, then the options in the --config should 
+modified as follow. If you don't set the values, then the default values will be taken. The default value of samples is human, and for seq_type is WGS. 
+
 ```
 $ cd /mnt/beegfs/scratch/username/yourprojectdir/projectname
 $ emacs -nw variant_call_list_TvN.tsv
