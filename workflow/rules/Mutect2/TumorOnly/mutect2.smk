@@ -15,10 +15,10 @@ rule Mutect2_tumor_only:
         STATS = "Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz.stats"
     params:
         queue = "mediumq",
-        gatk        = config["gatk"]["app"]
+        gatk        = config["gatk"]["app"],
         index       = config["gatk"][config["samples"]]["genome_fasta"],
         interval    = config["gatk"][config["samples"]][config["seq_type"]]["mutect_interval_dir"] + "/{interval}.bed",
-        gnomad_ref  = configconfig["gatk"][config["samples"]]["gnomad_ref"]
+        gnomad_ref  = config["gatk"][config["samples"]]["gnomad_ref"]
     log:
         "logs/Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.log"
     threads : 16
@@ -81,8 +81,6 @@ rule filter_mutect_calls_tumor_only:
         Mutect2_vcf = "Mutect2_T/{tsample}_tumor_only_T.vcf.gz",
         Mutect2_stats = "Mutect2_T/{tsample}_tumor_only_T.vcf.gz.stats",
         contamination_table = "cross_sample_contamination/{tsample}_calculatecontamination.table",
-        MUTECT_FILTER_REF = config["MUTECT_FILTER_REF"],
-        index = config["GENOME_FASTA"]
     output:
         VCF = "Mutect2_T/{tsample}_tumor_only_filtered_T.vcf.gz",
         INDEX = "Mutect2_T/{tsample}_tumor_only_filtered_T.vcf.gz.tbi"
@@ -98,7 +96,7 @@ rule filter_mutect_calls_tumor_only:
     shell:
         "{params.gatk} --java-options \"-Xmx40g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" FilterMutectCalls"
         " -V {input.Mutect2_vcf}"
-        " -R {input.index}"
+        " -R {params.index}"
         " --contamination-table {input.contamination_table}"
         " -O {output.VCF} 2> {log}"
         

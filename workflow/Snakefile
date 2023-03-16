@@ -104,7 +104,7 @@ elif os.path.isfile("variant_call_list_Tp.tsv"):
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
         for row in rd:
             tsample = row[0]
-            PoN = row[1]
+            PoN     = row[1]
             TSAMPLE.append(tsample)
             build_Tp_targets(tsample, PoN)
 
@@ -123,7 +123,7 @@ else:
     TUMOR_ONLY = True
     TSAMPLE, PAIRED = glob_wildcards("DNA_samples/{tsample,.+}_{paired,[012]}.fastq.gz")
     for tsample in TSAMPLE:
-        build_Tonly_target(tsample)
+        build_Tonly_targets(tsample)
         
 rule all:
     input:
@@ -163,10 +163,11 @@ if TUMOR_ONLY == False:
     include: "rules/Facets/cnvFacets.smk"
 
 ######## HaplotypeCaller and Annovar ########
-if TUMOR_ONLY == False:
-    ## Call germline SNPs and indels via local re-assembly of haplotypes
-    include: "rules/HaplotypeCaller/haplotypeCaller.smk"
+
+## Call germline SNPs and indels via local re-assembly of haplotypes
+include: "rules/HaplotypeCaller/haplotypeCaller.smk"
     
+if TUMOR_ONLY == False:
     ## Annovar on Haplotype caller 
     include: "rules/Annovar/annovar.smk"
     

@@ -33,6 +33,7 @@
         "scripts": {
             "reformat_mutect2": "/mnt/beegfs/userdata/i_padioleau/code/reformat_mutect2_vcf_for_oncotator_input_GATK_4_1_8_1.py",
         },
+
         "human": {
             "target_interval": " -L 1",
             "genome_fasta": "/mnt/beegfs/scratch/Lg_PANUNZI/Konstantin/gatk/human_g1k_v37.fasta",
@@ -43,12 +44,14 @@
                 "hsmetrics_interval": "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/human_g1k_v37_major_chr_100kb_windows.interval",
                 "hsmetrics_bait": "/mnt/beegfs/userdata/i_padioleau/genome_data/b37_GATK/human_g1k_v37_major_chr_100kb_windows.interval",
             },
+
             "WES": {
                 "mutect_interval_dir": "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/bed_for_mutect2",
                 "hsmetrics_interval": "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/S07604514_Padded_b37.intervals",
                 "hsmetrics_bait": "/mnt/beegfs/userdata/i_padioleau/genome_data/agilent_SS_XT_V6/S07604514_Padded_b37.intervals",
             },
         },
+
         "mouse": {
             "target_interval": " -L /mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.bed",
             "genome_fasta": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/bwa_mm9_from_sanger/NCBIM37_um.fa",
@@ -60,9 +63,9 @@
                 "hsmetrics_bait"    : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
             },
             "WES": {
-                "mutect_interval_dir": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/interval_mutect2",
-                "hsmetrics_interval": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
-                "hsmetrics_bait"    : "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
+                "mutect_interval_dir": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/mutect2_intervals",
+                "hsmetrics_interval":  "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
+                "hsmetrics_bait"    :  "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
             },
         },
     },
