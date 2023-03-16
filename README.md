@@ -29,14 +29,21 @@ $ ln -s /datadir/* .
 ```
 - Step 3. configure workflow
 
-If there are only tumor samples, then the pipeline will run automatically in tumor only mode. 
-If there are both tumor samples and normal samples, then you need create a file called variant_call_list.tsv in the project directory. The first column is for the tumor samples, and second column is for the normal samples. Each is a tumor vs normal pair. The seperator is tab. I create a script to generate the table automatically, but anyway you need to verify the generated table before start the pipeline. 
+1. If there are both tumor samples and normal samples, then you need create a file **variant_call_list_TvN.tsv** in the project directory. The first column is for the tumor samples, and second column is for the normal samples. Each is a tumor vs normal pair. The seperator is tab. I create a script to generate the table automatically, but anyway you need to verify the generated table before start the pipeline. 
+
+2. If there are both tumor samples and panel of normal samples, then you need create a file **variant_call_list_Tp.tsv** in the project directory.
+
+3. If there are tumor, normal samples and panel of normal samples, then you need create a file **variant_call_list_TvNp.tsv** in the project directory.
+
+4. If there are only tumor samples, then the pipeline will run automatically in tumor only mode. 
 ```
-$ emacs -nw variant_call_list.tsv
+$ emacs -nw variant_call_list_TvN.tsv
 $ cat variant_call_list.tsv
 tumor_sample_A  normal_sample_A
 tumor_sample_B  normal_sample_B
 $ emacs -nw run.sh
+snakemake -c 'sbatch --cpus-per-task={threads} --mem={resources.mem_mb}M -p {params.queue}' --jobs 20 --rerun-incomplete --config samples=mouse seq_type=WES
+
 ```
 - Step 4. run workflow
 ```
