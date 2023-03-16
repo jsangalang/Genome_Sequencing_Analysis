@@ -20,7 +20,7 @@ TUMOR_ONLY = False
 mutect_intervals, = glob_wildcards(config["gatk"][config["samples"]][config["seq_type"]]["mutect_interval_dir"] + "/{interval}.bed")
 
 ## Get all fastq
-FASTQ_SAMPLES, = glob_wildcards("DNA_samples/{name}.fastq.gz")
+FASTQ, = glob_wildcards("DNA_samples/{name}.fastq.gz")
 
 TSAMPLE = []
 NSAMPLE = []
@@ -127,8 +127,8 @@ else:
         
 rule all:
     input:
-        expand('fastq_QC_raw/{fastq_sample}_fastqc.html', fastq_sample = FASTQ_SAMPLES),
-        expand('fastq_QC_clean/{fastq_sample}_fastqc.html', fastq_sample =  FASTQ_SAMPLES),
+        expand('fastq_QC_raw/{sample}_fastqc.html', sample = FASTQ),
+        expand('fastq_QC_clean/{sample}_fastqc.html', sample =  FASTQ),
         expand('bam/{sample}.nodup.recal.bam', sample =  NSAMPLE + TSAMPLE),
         # expand("BQSR/{sample}_BQSR_report.pdf", sample = TSAMPLE + NSAMPLE),
         expand(FACETS),

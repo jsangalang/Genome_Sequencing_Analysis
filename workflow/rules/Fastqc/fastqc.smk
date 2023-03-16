@@ -1,13 +1,12 @@
 ## A rule to generate fastq quality control on raw fastq
 rule fastqc_raw:
     input:
-        #lambda wildcards: [os.path.join(FASTQ_DIR[i], x + '.fastq.gz') for i,x in enumerate(FASTQ_SAMPLES) if x == wildcards.fastq_sample]
-        fastq='DNA_samples/{fastq_sample}.fastq.gz'
+        fastq='DNA_samples/{sample}.fastq.gz'
     output:
-        'fastq_QC_raw/{fastq_sample}_fastqc.html',
-        'fastq_QC_raw/{fastq_sample}_fastqc.zip'
+        'fastq_QC_raw/{sample}_fastqc.html',
+        'fastq_QC_raw/{sample}_fastqc.zip'
     log:
-        "logs/fastq_QC_raw/{fastq_sample}_fastqc.html.log"
+        "logs/fastq_QC_raw/{sample}_fastqc.html.log"
     params:    
         queue = "shortq",
         fastqc = config["fastqc"]["app"],
