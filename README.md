@@ -26,8 +26,7 @@ $ cd /mnt/beegfs/scratch/username/yourprojectdir
 $ mkdir projectname; cd !$
 $ ln -s /workflowpath/workflow .
 $ cp /workflowpath/run.sh .
-$ mkdir -p DNA_samples
-$ cd DNA_samples
+$ mkdir -p DNA_samples; cd !$
 $ ln -s /datadir/* .
 ```
 - Step 3. configure workflow
