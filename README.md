@@ -37,7 +37,7 @@ $ ln -s /datadir/* .
 
 3. If there are tumor, normal samples and panel of normal samples, then you need create a file **variant_call_list_TvNp.tsv** in the project directory.
 
-4. If there are only tumor samples, then the pipeline will run automatically in tumor only mode. 
+4. If there are only tumor samples, then you don't need to generate any tsv file. The pipeline will run automatically in tumor only mode. 
 ```
 $ cd /mnt/beegfs/scratch/username/yourprojectdir/projectname
 $ emacs -nw variant_call_list_TvN.tsv
