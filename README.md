@@ -23,10 +23,8 @@ should be always accessible on the work nodes.
 
 ```
 $ cd /mnt/beegfs/scratch/username/yourprojectdir
-$ mkdir projectname
-$ cd projectname
+$ mkdir projectname; cd !$
 $ ln -s /workflowpath/workflow .
-$ ln -s /workflowpath/conf .
 $ cp /workflowpath/run.sh .
 $ mkdir -p DNA_samples
 $ cd DNA_samples
