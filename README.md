@@ -4,10 +4,14 @@
 
 #### Usage On flamingo
 
-- Step 0. clone github workflow project on flamingo
+- Step 0. clone github workflow project on flamingo or update the code
 ```
 $ ssh username@flamingo.intra.igr.fr
 $ git clone https://github.com/jinxin-wang/Genome_Sequencing_Analysis.git
+
+or
+
+$ git pull
 ```
 - Step 1. create conda envirements 
 ```
