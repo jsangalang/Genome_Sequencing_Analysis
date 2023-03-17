@@ -6,7 +6,7 @@ rule extract_exom_mutect2_tumor_only_pon:
     output:
         exom_Mutect2 = temp("Mutect2_Tp_exom/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp_exom_unsorted.vcf.gz")
     log:
-        "logs/Mutect2_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp.vcf.txt"
+        "logs/Mutect2_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp.vcf.log"
     params:
         queue = "mediumq",
         bcftools = config["bcftools"]["app"],
@@ -24,7 +24,7 @@ rule sort_exom_mutect2_tumor_only_pon:
     output:
         exom_Mutect2 = "Mutect2_Tp_exom/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp_exom.vcf.gz"
     log:
-        "logs/Mutect2_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp_sort.txt"
+        "logs/Mutect2_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp_sort.log"
     params:
         queue = "shortq",
         vcfsort = config["vcfsort"]["app"],
@@ -43,7 +43,7 @@ rule index_exom_mutect2_tumor_only_pon:
     output:
         exom_Mutect2 = "Mutect2_Tp_exom/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp_exom.vcf.gz.tbi"
     log:
-        "logs/Mutect2_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp_index.txt"
+        "logs/Mutect2_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp_index.log"
     params:
         queue = "shortq",
         gatk = config["gatk"]["app"],
@@ -62,7 +62,7 @@ rule get_variant_bed_tumor_only_pon_exom:
     output:
         BED = "variant_bed_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp_exom.bed"
     log:
-        "logs/variant_bed_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp_exom.bed.txt"
+        "logs/variant_bed_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp_exom.bed.log"
     params:
         queue = "mediumq",
         vcf2bed = config["vcf2bed"]["app"]
@@ -81,7 +81,7 @@ rule samtools_mpileup_tumor_only_pon_exom:
     output:
         PILEUP = "pileup_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp_exom.pileup.gz"
     log:
-        "logs/pileup_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp_exom.pileup.txt"
+        "logs/pileup_Tp_exom/{tsample}_PON_{panel_of_normal}_Tp_exom.pileup.log"
     params:
         queue = "mediumq",
         samtools = config["samtools"]["app"],
@@ -120,7 +120,7 @@ rule oncotator_reformat_tumor_only_pon_exom:
         maf ="oncotator_Tp_maf_exom/{tsample}_PON_{panel_of_normal}_Tp_selection_exom.TCGAMAF",
         tsv ="oncotator_Tp_tsv_exom/{tsample}_PON_{panel_of_normal}_Tp_exom.tsv"
     log:
-        "logs/oncotator_exom/{tsample}_PON_{panel_of_normal}_Tp_selection_exom.txt"
+        "logs/oncotator_exom/{tsample}_PON_{panel_of_normal}_Tp_selection_exom.log"
     params:
         queue = "shortq",
         oncotator_extract_Tonly = config["oncotator"]["scripts"]["extract_tumor_only"],
@@ -138,7 +138,7 @@ rule oncotator_with_pileup_tumor_only_pon_exom:
     output:
         tsv = "oncotator_Tp_tsv_pileup_exom/{tsample}_PON_{panel_of_normal}_Tp_with_pileup_exom.tsv"
     log:
-        "logs/oncotator_exom/{tsample}_PON_{panel_of_normal}_Tp_with_pileup_exom.txt"
+        "logs/oncotator_exom/{tsample}_PON_{panel_of_normal}_Tp_with_pileup_exom.log"
     params:
         queue = "shortq",
         oncotator_cross_pileup = config["oncotator"]["scripts"]["pileup"],
@@ -155,7 +155,7 @@ rule oncotator_with_COSMIC_tumor_only_pon_exom:
     output:
         tsv = "oncotator_Tp_tsv_COSMIC_exom/{tsample}_PON_{panel_of_normal}_Tp_with_COSMIC_exom.tsv"
     log:
-        "logs/oncotator_exom/{tsample}_PON_{panel_of_normal}_Tp_with_COSMIC_exom.txt"
+        "logs/oncotator_exom/{tsample}_PON_{panel_of_normal}_Tp_with_COSMIC_exom.log"
     params:
         queue = "shortq",
         oncotator_cross_cosmic = config["oncotator"]["scripts"]["cosmic_t_only"],

@@ -10,7 +10,7 @@ rule bwa_map:
         queue = "mediumq",
         bwa = config["bwa"]["app"],
         index = config["bwa"][config["samples"]]["index"],
-        samtools = config["samtools"]["app"]
+        samtools = config["samtools"]["app"],
     threads: 16
     resources:
         mem_mb = 51200

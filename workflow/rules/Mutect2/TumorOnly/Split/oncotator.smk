@@ -6,7 +6,7 @@ rule get_variant_bed_tumor_only:
     output:
         BED = "variant_bed_T/{tsample}_tumor_only_T.bed"
     log:
-        "logs/variant_bed_T/{tsample}_tumor_only_T.bed.txt"
+        "logs/variant_bed_T/{tsample}_tumor_only_T.bed.log"
     params:
         queue = "mediumq",
         vcf2bed = config["vcf2bed"]["app"],
@@ -20,12 +20,12 @@ rule get_variant_bed_tumor_only:
 rule samtools_mpileup_tumor_only:
     input:
         BED = "variant_bed_T/{tsample}_tumor_only_T.bed",
-        BAM = "bam/{tsample}.nodup.recal.bam" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam",
-        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["REMOVE_DUPLICATES"]=="True" else "bam/{tsample}.recal.bam.bai"
+        BAM = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
+        BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai"
     output:
         PILEUP = "pileup_T/{tsample}_tumor_only_T.pileup.gz"
     log:
-        "logs/pileup_T/{tsample}_tumor_only_T.pileup.txt"
+        "logs/pileup_T/{tsample}_tumor_only_T.pileup.log"
     params:
         queue = "mediumq",
         samtools = config["samtools"]["app"],
@@ -47,8 +47,8 @@ rule split_Mutect2_tumor_only:
     params:
         queue = "shortq",
         bcftools = config["bcftools"]["app"],
-        reformat = config["gatk"]["scripts"]["reformat_mutect2"]
-        interval = config["gatk"][config["samples"]][config["seq_type"]]["MUTECT_INTERVAL_DIR"] + "/{interval}.bed"
+        reformat = config["gatk"]["scripts"]["reformat_mutect2"],
+        interval = config["gatk"][config["samples"]][config["seq_type"]]["mutect_interval_dir"] + "/{interval}.bed"
     log:
         "logs/Mutect2_T_oncotator_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.log"
     threads : 1
@@ -104,7 +104,7 @@ rule oncotator_reformat_tumor_only:
         maf ="oncotator_T_maf/{tsample}_tumor_only_T_selection.TCGAMAF",
         tsv ="oncotator_T_tsv/{tsample}_tumor_only_T.tsv"
     log:
-        "logs/oncotator/{tsample}_tumor_only_T_selection.txt"
+        "logs/oncotator/{tsample}_tumor_only_T_selection.log"
     params:
         queue = "shortq",
         extract = config["oncotator"]["scripts"]["extract_tumor_only"],
@@ -122,7 +122,7 @@ rule oncotator_with_pileup_tumor_only:
     output:
         tsv = "oncotator_T_tsv_pileup/{tsample}_tumor_only_T_with_pileup.tsv"
     log:
-        "logs/oncotator/{tsample}_tumor_only_T_selection_with_pileup.txt"
+        "logs/oncotator/{tsample}_tumor_only_T_selection_with_pileup.log"
     params:
         queue = "shortq",
         oncotator_cross_pileup = config["oncotator"]["scripts"]["pileup"],
@@ -139,7 +139,7 @@ rule oncotator_with_COSMIC_tumor_only:
     output:
         tsv = "oncotator_T_tsv_COSMIC/{tsample}_tumor_only_T_with_COSMIC.tsv"
     log:
-        "logs/oncotator/{tsample}_tumor_only_T_selection_with_COSMIC.txt"
+        "logs/oncotator/{tsample}_tumor_only_T_selection_with_COSMIC.log"
     params:
         queue = "shortq",
         cross_cosmic    = config["oncotator"]["scripts"]["cosmic_t_only"],

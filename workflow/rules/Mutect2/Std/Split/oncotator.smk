@@ -5,7 +5,7 @@ rule get_variant_bed:
     output:
         BED = "variant_bed_TvN/{tsample}_Vs_{nsample}_TvN.bed"
     log:
-        "logs/variant_bed_TvN/{tsample}_Vs_{nsample}_TvN.bed.txt"
+        "logs/variant_bed_TvN/{tsample}_Vs_{nsample}_TvN.bed.log"
     params:
         queue   = "mediumq",
         vcf2bed = config["vcf2bed"]["app"],
@@ -24,7 +24,7 @@ rule samtools_mpileup:
     output:
         PILEUP = "pileup_TvN/{tsample}_Vs_{nsample}_TvN.pileup.gz"
     log:
-        "logs/pileup_TvN/{tsample}_Vs_{nsample}_TvN.pileup.txt"
+        "logs/pileup_TvN/{tsample}_Vs_{nsample}_TvN.pileup.log"
     params:
         queue = "mediumq",
         samtools = config["samtools"]["app"],
@@ -104,7 +104,7 @@ rule oncotator_reformat_TvN:
         maf ="oncotator_TvN_maf/{tsample}_Vs_{nsample}_TvN_selection.TCGAMAF",
         tsv ="oncotator_TvN_tsv/{tsample}_Vs_{nsample}_TvN.tsv"
     log:
-        "logs/oncotator/{tsample}_Vs_{nsample}_TvN_selection.txt"
+        "logs/oncotator/{tsample}_Vs_{nsample}_TvN_selection.log"
     params:
         queue   = "shortq",
         extract = config["oncotator"]["scripts"]["extract_tumor_vs_normal"]
@@ -122,7 +122,7 @@ rule oncotator_with_pileup_TvN:
     output:
         tsv = "oncotator_TvN_tsv_pileup/{tsample}_Vs_{nsample}_TvN_with_pileup.tsv"
     log:
-        "logs/oncotator/{tsample}_Vs_{nsample}_TvN_with_pileup.txt"
+        "logs/oncotator/{tsample}_Vs_{nsample}_TvN_with_pileup.log"
     params:
         queue = "shortq",
         oncotator_cross_pileup = config["oncotator"]["scripts"]["pileup"],
@@ -139,7 +139,7 @@ rule oncotator_with_COSMIC_TvN:
     output:
         tsv = "oncotator_TvN_tsv_COSMIC/{tsample}_Vs_{nsample}_TvN_with_COSMIC.tsv"
     log:
-        "logs/oncotator/{tsample}_Vs_{nsample}_TvN_with_COSMIC.txt"
+        "logs/oncotator/{tsample}_Vs_{nsample}_TvN_with_COSMIC.log"
     params:
         queue = "shortq",
         cross_cosmic    = config["oncotator"]["scripts"]["cosmic_t_n"],

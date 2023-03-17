@@ -1,28 +1,28 @@
 ## Annovar on Haplotype caller 
 rule annovar:
     input:
-        vcf = "haplotype_caller_filtered/{nsample}_germline_variants_filtered.vcf.gz"
+        vcf = "haplotype_caller_filtered/{sample}_germline_variants_filtered.vcf.gz"
     output:
-        avinput = "annovar/{nsample}.avinput",
-        txt = "annovar/{nsample}.multianno.txt",
-        vcf = "annovar/{nsample}.multianno.vcf",
+        avinput = "annovar/{sample}.avinput",
+        txt     = "annovar/{sample}.%s_multianno.txt"%config["annovar"][config["samples"]]["ref"],
+        vcf     = "annovar/{sample}.%s_multianno.vcf"%config["annovar"][config["samples"]]["ref"],
     params:
         queue    = "mediumq",
         annovar  = config["annovar"]["app"],
-        ref      = config["annovar"][config["samples"]]["ref"],
         DB       = config["annovar"][config["samples"]]["DB"],
+        ref      = config["annovar"][config["samples"]]["ref"],
         protocol = config["annovar"][config["samples"]]["protocols"],
         operation= config["annovar"][config["samples"]]["operations"],
-    threads : 4
+    threads : 36
     resources:
         mem_mb = 10240
     log:
-        "logs/annovar/{nsample}.log"
+        "logs/annovar/{sample}.log"
     shell :
         "{params.annovar} {input.vcf} {params.DB} "
-        " --thread {threads} --maxgenethread 4 "
-        " -buildver hg19 "
-        " -out annovar/{wildcards.nsample} "
+        " --thread {threads} --maxgenethread 8 "
+        " -buildver {params.ref} "
+        " -out annovar/{wildcards.sample} "
         " -remove "
         " -protocol {params.protocol} "
         " -operation {params.operation} "

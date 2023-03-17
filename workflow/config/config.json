@@ -20,7 +20,7 @@
             "index": "/mnt/beegfs/scratch/Lg_PANUNZI/Konstantin/gatk/human_g1k_v37.fasta",
         },
         "mouse": {
-            "index":  "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/bwa_mm9_from_sanger/NCBIM37_um.fa",
+            "index":  "/mnt/beegfs/scratch/j_wang/00_Genome_Ref/mm9/NCBIM37_um.fa",
         },
     },
 
@@ -89,7 +89,7 @@
     },
 
     "annovar": {
-        "app": "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/table_annovar.pl",
+        "app": "/mnt/beegfs/scratch/j_wang/00_Genome_Ref/annovar/table_annovar.pl",
         "human": {
             "ref": "hg19",
             "DB": "/mnt/beegfs/userdata/i_padioleau/genome_data/annovar/humandb/",
