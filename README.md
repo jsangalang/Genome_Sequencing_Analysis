@@ -22,8 +22,7 @@ $ conda env create -f pipeline_GATK_2.1.4_conda_env.txt -n pipeline_GATK_2.1.4_V
 - Step 2. deploy workflow
 
 Create a directory for your project, then create soft links to your datasets in the directory DNA_samples. Please make sure 
-that the name of the files terminated with _0.fastq.gz, _1.fastq.gz or _2.fastq.gz. Moreover, keep in mind that the softlinks 
-should be always accessible on the work nodes.
+that the pattern of files name is {file_name}_[012].fastq.gz. Moreover, keep in mind that the softlinks should be always accessible on the work nodes.
 
 ```
 $ cd /mnt/beegfs/scratch/username/yourprojectdir
