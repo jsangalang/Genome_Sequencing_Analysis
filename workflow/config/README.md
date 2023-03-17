@@ -6,4 +6,12 @@ TARGET_INTERVAL_BQSR = " -L 1 "
 
 #### Note 2: any configuration of DIR should not be terminated by "/"
 
-#### 
+#### Settings of pipeline
+
+samples: ["human"|"mouse"]
+
+seq_type: ["WGS"|"WES"]
+
+paired: [True|False]
+
+remove_duplicates: [True|False]
