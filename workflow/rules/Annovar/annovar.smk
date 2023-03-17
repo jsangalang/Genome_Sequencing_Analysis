@@ -13,7 +13,7 @@ rule annovar:
         ref      = config["annovar"][config["samples"]]["ref"],
         protocol = config["annovar"][config["samples"]]["protocols"],
         operation= config["annovar"][config["samples"]]["operations"],
-    threads : 36
+    threads : 16
     resources:
         mem_mb = 10240
     log:
