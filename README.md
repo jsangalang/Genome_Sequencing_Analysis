@@ -49,16 +49,26 @@ modified as follow. If you don't set the values, then the default values will be
 ```
 $ cd /mnt/beegfs/scratch/username/yourprojectdir/projectname
 $ emacs -nw variant_call_list_TvN.tsv
-$ cat variant_call_list.tsv
+$ cat variant_call_list_TvN.tsv
 tumor_sample_A  normal_sample_A
 tumor_sample_B  normal_sample_B
 $ emacs -nw run.sh
 snakemake -c 'sbatch --cpus-per-task={threads} --mem={resources.mem_mb}M -p {params.queue}' --jobs 20 --rerun-incomplete --config samples=mouse seq_type=WES
-
 ```
 - Step 4. run workflow
 ```
 $ ./run.sh
+[message] Loading configuration file
+[message] Starting WES analysis pipeline for mouse samples
+[message] Pipeline runs in Tumor vs Normal mode.
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 20
+Job counts:
+	count	jobs
+....
+....
+....
 ```
 
 [Examples of Best Practice](https://snakemake.github.io/snakemake-workflow-catalog/)
