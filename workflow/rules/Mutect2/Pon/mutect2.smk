@@ -113,7 +113,7 @@ rule Filter_By_Orientation_Bias_pon:
         filtered_vcf_index = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz.tbi"
     params:
         queue = "mediumq",
-        gatk = config["gatk"]["app"]
+        gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
     log:
         "logs/filter_Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz.log"
     threads : 1

@@ -110,7 +110,7 @@ rule Filter_By_Orientation_Bias_tumor_only:
         filtered_vcf_index = "Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz.tbi"
     params:
         queue = "mediumq",
-        gatk = config["gatk"]["app"],
+        gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
     log:
         "logs/filter_Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz.log"
     threads : 4

@@ -29,9 +29,10 @@
     },
 
     "gatk": {
-        "app": "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
+        "app": "~/.conda/envs/GATK4/bin/gatk",
+        "version": "4.3.0.0",
         "scripts": {
-            "reformat_mutect2": "/mnt/beegfs/userdata/i_padioleau/code/reformat_mutect2_vcf_for_oncotator_input_GATK_4_1_8_1.py",
+            "reformat_mutect2": "workflow/scripts/reformat_mutect2_vcf_for_oncotator_input_GATK_4_1_8_1.py",
         },
 
         "human": {
@@ -56,7 +57,7 @@
             "target_interval": " -L /mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.bed",
             "genome_fasta": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/bwa_mm9_from_sanger/NCBIM37_um.fa",
             "gnomad_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/genome_project_snp/mgp_V2_snp_indel_mm9.vcf.gz",
-            "mutect_filter_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/genome_project_snp/mgp_V2_snp_indel_mm9.vcf.gz",
+            "mutect_filter_ref": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/genome_project_snp/mgp_V2_snp_indel_mm9_PASS_AF_only.vcf.gz",
             "WGS": {
                 "mutect_interval_dir": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/interval_mutect2",
                 "hsmetrics_interval": "/mnt/beegfs/userdata/i_padioleau/genome_data/mm9/agilent_V1/Sureselect_mouse_v1.padded.uniq.interval",
@@ -84,7 +85,7 @@
     "R": {
         "app": "~/.conda/envs/pipeline_GATK_2.1.4_V2/bin/Rscript",
         "scripts": {
-            "facet_graph": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/facets_graphs.R",            
+            "facet_graph": "workflow/scripts/facets_graphs.R",
         },
     },
 
@@ -157,12 +158,12 @@
         },
 
         "scripts": {
-            "merge_oncotator": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/merge_oncotator_MAF.py",
-            "extract_tumor_vs_normal": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/oncotator_extract_information_from_MAF_tumor_Vs_normal.py",
-            "pileup": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/01_add_pileup_info_to_oncotator_tsv_files.py",
-            "cosmic_t_n": "/mnt/beegfs/userdata/i_padioleau/code/cross_oncotator_TvN_with_COSMIC_pipeline_version.py",
-            "extract_tumor_only": "/mnt/beegfs/userdata/i_padioleau/code/wgs_wes_pipeline/scripts/oncotator_extract_information_from_MAF_tumor_only.py",
-            "cosmic_t_only": "/mnt/beegfs/userdata/i_padioleau/code/cross_oncotator_tumor_only_with_COSMIC_pipeline_version.py",        
+            "merge_oncotator": "workflow/scripts/merge_oncotator_MAF.py",
+            "extract_tumor_vs_normal": "workflow/scripts/oncotator_extract_information_from_MAF_tumor_Vs_normal.py",
+            "pileup": "workflow/scripts/01_add_pileup_info_to_oncotator_tsv_files.py",
+            "cosmic_t_n": "workflow/scripts/cross_oncotator_TvN_with_COSMIC_pipeline_version.py",
+            "extract_tumor_only": "workflow/scripts/oncotator_extract_information_from_MAF_tumor_only.py",
+            "cosmic_t_only": "workflow/scripts/cross_oncotator_tumor_only_with_COSMIC_pipeline_version.py",        
         },
     }, 
 }

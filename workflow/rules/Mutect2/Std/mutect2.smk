@@ -24,8 +24,8 @@ rule Mutect2:
     resources:
         mem_mb = 51200
     shell: 
-        "read readGroup_{wildcards.tsample} < <(samtools view -@ {threads} -H {input.tumor_bam} | grep \'^@RG\' | awk -F\'SM:\' \'{{split($2,a,\" \"); print a[1]}}\' -);"
-        "read readGroup_{wildcards.nsample} < <(samtools view -@ {threads} -H {input.norm_bam} | grep \'^@RG\' | awk -F\'SM:\' \'{{split($2,a,\" \"); print a[1]}}\' -);"
+        "read readGroup_{wildcards.tsample} < <(samtools view -H {input.tumor_bam} | grep \'^@RG\' | awk -F\'SM:\' \'{{split($2,a,\" \"); print a[1]}}\' -);"
+        "read readGroup_{wildcards.nsample} < <(samtools view -H {input.norm_bam}  | grep \'^@RG\' | awk -F\'SM:\' \'{{split($2,a,\" \"); print a[1]}}\' -);"
         "{params.gatk} --java-options \"-Xmx40g  -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" Mutect2"
         " --dont-use-soft-clipped-bases true "
         " --native-pair-hmm-threads {threads} "
@@ -114,7 +114,7 @@ rule Filter_By_Orientation_Bias:
         filtered_vcf_index = "Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz.tbi"
     params:
         queue = "mediumq",
-        gatk = config["gatk"]["app"],
+        gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
     log:
         "logs/filter_Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz.log"
     threads : 4
