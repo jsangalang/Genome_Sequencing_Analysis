@@ -15,7 +15,7 @@ if config["remove_duplicates"] == True :
         log:
             "logs/remove_duplicate_metrics/{sample}.nodup.log"
         shell:
-            "{params.gatk} --java-options \"-Xmx75g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" MarkDuplicates --INPUT {input} --REMOVE_DUPLICATES=true --OUTPUT {output.bam} -M {output.metrics} 2> {log}"
+            "{params.gatk} --java-options \"-Xmx75g -XX:+UseParallelGC -XX:ParallelGCThreads={threads} -Djava.io.tmpdir=/mnt/beegfs/userdata/$USER/tmp \" MarkDuplicates --INPUT {input} --REMOVE_DUPLICATES true --OUTPUT {output.bam} --METRICS_FILE {output.metrics} 2> {log}"
 
 ## A rule to generate bam index with samtools
 rule indexbam_before_recal:
