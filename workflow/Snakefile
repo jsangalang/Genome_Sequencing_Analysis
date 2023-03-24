@@ -90,6 +90,7 @@ def build_Tonly_targets(tsample):
         ANNOVAR.append("annovar_mutect2_T/" + tsample  + ".avinput")
             
 if os.path.isfile("variant_call_list_TvN.tsv"):
+    print("[message] Configuration file variant_call_list_TvN.tsv is detected. ")
     print("[message] Pipeline runs in Tumor vs Normal mode.")
     with open("variant_call_list_TvN.tsv",'r') as fd: 
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
@@ -101,6 +102,7 @@ if os.path.isfile("variant_call_list_TvN.tsv"):
             build_TvN_targets(tsample, nsample)
 
 elif os.path.isfile("variant_call_list_Tp.tsv"):
+    print("[message] Configuration file variant_call_list_Tp.tsv is detected. ")
     print("[message] Pipeline runs in Tumor vs PoN mode.")
     with open("variant_call_list_Tp.tsv",'r') as fd: 
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
@@ -111,6 +113,7 @@ elif os.path.isfile("variant_call_list_Tp.tsv"):
             build_Tp_targets(tsample, PoN)
 
 elif os.path.isfile("variant_call_list_TvNp.tsv"):
+    print("[message] Configuration file variant_call_list_TvNp.tsv is detected. ")
     print("[message] Pipeline runs in Tumor vs Normal vs PoN mode.")
     with open("variant_call_list_TvNp.tsv",'r') as fd: 
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
@@ -122,8 +125,19 @@ elif os.path.isfile("variant_call_list_TvNp.tsv"):
             NSAMPLE.append(nsample)
             build_TvNp_targets(tsample, nsample, PoN)
 
+elif os.path.isfile("variant_call_list_T.tsv"):
+    print("[message] Configuration file variant_call_list_T.tsv is detected. ")
+    print("[message] Pipeline runs in Tumor Only mode.")
+    with open("variant_call_list_T.tsv",'r') as fd: 
+        rd = csv.reader(fd, delimiter="\t", quotechar='"')
+        for row in rd:
+            tsample = row[0]
+            TSAMPLE.append(tsample)
+            build_Tonly_targets(tsample)
+
 else: 
     TUMOR_ONLY = True
+    print("[message] No configuration file is detected. ")
     print("[message] Pipeline runs in Tumor Only mode.")
     TSAMPLE, PAIRED = glob_wildcards("DNA_samples/{tsample,.+}_{paired,[012]}.fastq.gz")
     for tsample in TSAMPLE:
