@@ -1,5 +1,6 @@
 import os
 import csv
+import errno
 
 ## load json configuration file
 print("[message] Loading configuration file")
@@ -89,9 +90,12 @@ def build_Tonly_targets(tsample):
     elif config["samples"] == "mouse":
         ANNOVAR.append("annovar_mutect2_T/" + tsample  + ".avinput")
             
-if config["mode"] == "TvN" and os.path.isfile("variant_call_list_TvN.tsv"):
-    print("[message] Configuration file variant_call_list_TvN.tsv is detected. ")
+if config["mode"] == "TvN": 
     print("[message] Pipeline runs in Tumor vs Normal mode.")
+    fname = "variant_call_list_TvN.tsv"
+    if not os.path.isfile(fname):
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), fname)
+    print("[message] Configuration file variant_call_list_TvN.tsv is detected. ")
     with open("variant_call_list_TvN.tsv",'r') as fd: 
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
         for row in rd:
@@ -101,9 +105,12 @@ if config["mode"] == "TvN" and os.path.isfile("variant_call_list_TvN.tsv"):
             NSAMPLE.append(nsample)
             build_TvN_targets(tsample, nsample)
 
-if config["mode"] == "Tp" and os.path.isfile("variant_call_list_Tp.tsv"):
-    print("[message] Configuration file variant_call_list_Tp.tsv is detected. ")
+if config["mode"] == "Tp":
     print("[message] Pipeline runs in Tumor vs PoN mode.")
+    fname = "variant_call_list_Tp.tsv"
+    if not os.path.isfile(fname):
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), fname)
+    print("[message] Configuration file variant_call_list_Tp.tsv is detected. ")
     with open("variant_call_list_Tp.tsv",'r') as fd: 
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
         for row in rd:
@@ -112,9 +119,12 @@ if config["mode"] == "Tp" and os.path.isfile("variant_call_list_Tp.tsv"):
             TSAMPLE.append(tsample)
             build_Tp_targets(tsample, PoN)
 
-if config["mode"] == "TvNp" and os.path.isfile("variant_call_list_TvNp.tsv"):
-    print("[message] Configuration file variant_call_list_TvNp.tsv is detected. ")
+if config["mode"] == "TvNp":
+    fname = "variant_call_list_TvNp.tsv"
     print("[message] Pipeline runs in Tumor vs Normal vs PoN mode.")
+    if not os.path.isfile(fname):
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), fname)
+    print("[message] Configuration file variant_call_list_TvNp.tsv is detected. ")
     with open("variant_call_list_TvNp.tsv",'r') as fd: 
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
         for row in rd:
@@ -127,9 +137,9 @@ if config["mode"] == "TvNp" and os.path.isfile("variant_call_list_TvNp.tsv"):
 
 if config["mode"] == "T":
     TUMOR_ONLY = True
-    print("[message] No configuration file is detected. ")
     print("[message] Pipeline runs in Tumor Only mode.")
     if os.path.isfile("variant_call_list_T.tsv"):
+        print("[message] Configuration file variant_call_list_T.tsv is detected. ")
         with open("variant_call_list_T.tsv",'r') as fd: 
             rd = csv.reader(fd, delimiter="\t", quotechar='"')
             for row in rd:
@@ -137,6 +147,7 @@ if config["mode"] == "T":
                 TSAMPLE.append(tsample)
                 build_Tonly_targets(tsample)
     else: 
+        print("[message] No configuration file is detected. ")
         TSAMPLE, PAIRED = glob_wildcards("DNA_samples/{tsample,.+}_{paired,[012]}.fastq.gz")
         for tsample in TSAMPLE:
             build_Tonly_targets(tsample)
