@@ -59,6 +59,7 @@ $ ./run.sh
 [message] Loading configuration file
 [message] Starting WES analysis pipeline for mouse samples
 [message] Pipeline runs in Tumor vs Normal mode.
+[message] Configuration file variant_call_list_TvN.tsv is detected.
 Building DAG of jobs...
 Using shell: /usr/bin/bash
 Provided cluster nodes: 20
