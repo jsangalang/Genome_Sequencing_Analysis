@@ -87,7 +87,8 @@ rule filter_mutect_calls_tumor_only_pon:
         INDEX = "Mutect2_Tp/{tsample}_PON_{panel_of_normal}_filtered_Tp.vcf.gz.tbi"
     params:
         queue = "mediumq",
-        gatk  = config["gatk"]["app"],
+        gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
+        # gatk  = config["gatk"]["app"],
         index = config["gatk"][config["samples"]]["genome_fasta"],
     log:
         "logs/filter_Mutect2_Tp/{tsample}_PON_{panel_of_normal}_filtered_Tp.vcf.gz.log"
