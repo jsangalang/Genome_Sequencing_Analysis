@@ -1,4 +1,5 @@
 {
+    "mode": "TvN",
     "samples" : "human",
     "seq_type": "WGS",
     "paired": True,
