@@ -40,10 +40,9 @@ $ ln -s /datadir/* .
 
 3. If there are tumor, normal samples and panel of normal samples, then you need create a file **variant_call_list_TvNp.tsv** in the project directory.
 
-4. If there are only tumor samples, then you don't need to generate any tsv file. The pipeline will run automatically in tumor only mode. 
+4. If there are only tumor samples, then you don't need to generate any tsv file. Or you can create a file **variant_call_list_T.tsv** in the project directory.
 
-Then, you need to modify the bash file run.sh. For example, if you need to run WES pipeline for mice samples, then the options in the --config should 
-modified as follow. If you don't set the values, then the default values will be taken. The default value of samples is human, and for seq_type is WGS. 
+Then, you need to modify the bash file run.sh. For example, if you need to run WES pipeline for mice samples in tumor vs normal mode, then the options in the --config should modified as follow. If you don't set the values, then the default values will be taken. The default value of samples is human, and for seq_type is WGS, for mode is TvN 
 
 ```
 $ cd /mnt/beegfs/scratch/username/yourprojectdir/projectname
@@ -52,7 +51,7 @@ $ cat variant_call_list_TvN.tsv
 tumor_sample_A  normal_sample_A
 tumor_sample_B  normal_sample_B
 $ emacs -nw run.sh
-snakemake -c 'sbatch --cpus-per-task={threads} --mem={resources.mem_mb}M -p {params.queue}' --jobs 20 --rerun-incomplete --config samples=mouse seq_type=WES
+snakemake -c 'sbatch --cpus-per-task={threads} --mem={resources.mem_mb}M -p {params.queue}' --jobs 20 --rerun-incomplete --config samples=mouse seq_type=WES mode=TvN
 ```
 - Step 4. run workflow
 ```
