@@ -90,7 +90,8 @@ rule filter_mutect_calls:
         INDEX = "Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz.tbi"
     params:
         queue = "mediumq",
-        gatk  = config["gatk"]["app"],
+        # gatk  = config["gatk"]["app"],
+        gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
         index = config["gatk"][config["samples"]]["genome_fasta"],
     log:
         "logs/filter_Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz.log"

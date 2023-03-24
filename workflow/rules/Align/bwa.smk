@@ -11,8 +11,8 @@ rule bwa_map:
         bwa = config["bwa"]["app"],
         index = config["bwa"][config["samples"]]["index"],
         samtools = config["samtools"]["app"],
-    threads: 16
+    threads: 32
     resources:
-        mem_mb = 51200
+        mem_mb = 102400
     shell:
-        "{params.bwa} mem -M -R \"@RG\\tID:bwa\\tSM:{wildcards.sample}\\tPL:ILLUMINA\\tLB:truseq\" -t {threads} {params.index} {input.fastq} | {params.samtools} view -@ {threads} -bS - | {params.samtools} sort -@ {threads} - -o {output} 2> {log}"
+        "{params.bwa} mem -M -R \"@RG\\tID:bwa\\tSM:{wildcards.sample}\\tPL:ILLUMINA\\tLB:truseq\" -t {threads} {params.index} {input.fastq} | {params.samtools} view -bS - | {params.samtools} sort -@ {threads} - -o {output} 2> {log}"

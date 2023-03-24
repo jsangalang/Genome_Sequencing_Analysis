@@ -95,8 +95,8 @@ rule samtools_mpileup_exom:
 # A rule to annotate mutect2 tumor versus normal results with oncotator  
 rule oncotator_exom:
     input:
-        Mutect2_vcf = "Mutect2_TvN_exom/{tsample}_Vs_{nsample}_twicefiltered_TvN_exom.vcf.gz",
-        Mutect2_vcf_index = "Mutect2_TvN_exom/{tsample}_Vs_{nsample}_twicefiltered_TvN_exom.vcf.gz.tbi"
+        Mutect2_vcf       = "Mutect2_TvN_exom/{tsample}_Vs_{nsample}_twicefiltered_TvN_exom.vcf.gz",
+        Mutect2_vcf_index = "Mutect2_TvN_exom/{tsample}_Vs_{nsample}_twicefiltered_TvN_exom.vcf.gz.tbi",
     output:
         MAF="oncotator_TvN_exom/{tsample}_Vs_{nsample}_annotated_TvN_exom.TCGAMAF"
     params:

@@ -13,9 +13,9 @@ if config["paired"] == False:
             queue = "mediumq",
             fastp = config["fastp"]["app"],
             adapters = config["fastp"]["adapters"]
-        threads : 16
+        threads : 32
         resources:
-            mem_mb = 51200
+            mem_mb = 102400
         run:
             print("[Message: rule fastp] Clean fastq files with fastp single read.")
             shell('{params.fastp} --thread {threads} --dont_overwrite -i {input.fastq_0} -o {output.fastq_clean} --compression 9 --adapter_fasta {params.adapters} --trim_poly_g --trim_poly_x --length_required 25 --overrepresentation_analysis  --html {output.html_report} --json {output.json_report} 2> {log}')
@@ -37,9 +37,9 @@ elif config["paired"] == True:
             queue = "longq",
             fastp = config["fastp"]["app"],
             adapters = config["fastp"]["adapters"]
-        threads : 16
+        threads : 32
         resources:
-            mem_mb = 51200
+            mem_mb = 102400
         run:
             print("[Message: rule fastp] Clean fastq files with fastp paired-end.")
             shell('{params.fastp} --thread {threads} --dont_overwrite -i {input.fastq_1} -o {output.fastq_clean_1} -I {input.fastq_2} -O {output.fastq_clean_2} --compression 9 --adapter_fasta {params.adapters} --trim_poly_g --trim_poly_x --length_required 25 --overrepresentation_analysis  --html {output.html_report} --json {output.json_report} 2> {log}')
