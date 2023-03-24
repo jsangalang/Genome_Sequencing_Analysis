@@ -135,7 +135,7 @@ if config["mode"] == "TvNp":
             NSAMPLE.append(nsample)
             build_TvNp_targets(tsample, nsample, PoN)
 
-if config["mode"] == "T_only":
+if config["mode"] == "T":
     TUMOR_ONLY = True
     print("[message] Pipeline runs in Tumor Only mode.")
     if os.path.isfile("variant_call_list_T.tsv"):
