@@ -126,6 +126,7 @@ elif os.path.isfile("variant_call_list_TvNp.tsv"):
             build_TvNp_targets(tsample, nsample, PoN)
 
 elif os.path.isfile("variant_call_list_T.tsv"):
+    TUMOR_ONLY = True
     print("[message] Configuration file variant_call_list_T.tsv is detected. ")
     print("[message] Pipeline runs in Tumor Only mode.")
     with open("variant_call_list_T.tsv",'r') as fd: 
