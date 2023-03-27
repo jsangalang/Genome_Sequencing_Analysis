@@ -99,10 +99,8 @@ def build_Tonly_targets(tsample):
 if config["mode"] == "TvN": 
     print(OKGREEN + "[message] Pipeline runs in Tumor vs Normal mode." + ENDC)
     fname = "variant_call_list_TvN.tsv"
-    if not os.path.isfile(fname):
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), fname)
-    print(OKGREEN + "[message] Configuration file variant_call_list_TvN.tsv is detected. " + ENDC)
-    with open("variant_call_list_TvN.tsv",'r') as fd: 
+    with open(fname,'r') as fd: 
+        print(OKGREEN + "[message] Configuration file %s is detected. "%fname + ENDC)
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
         for row in rd:
             tsample = row[0]
@@ -114,10 +112,8 @@ if config["mode"] == "TvN":
 if config["mode"] == "Tp":
     print(OKGREEN + "[message] Pipeline runs in Tumor vs PoN mode." + ENDC)
     fname = "variant_call_list_Tp.tsv"
-    if not os.path.isfile(fname):
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), fname)
-    print(OKGREEN + "[message] Configuration file variant_call_list_Tp.tsv is detected. " + ENDC)
-    with open("variant_call_list_Tp.tsv",'r') as fd: 
+    with open(fname,'r') as fd: 
+        print(OKGREEN + "[message] Configuration file %s is detected. "%fname + ENDC)
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
         for row in rd:
             tsample = row[0]
@@ -126,12 +122,10 @@ if config["mode"] == "Tp":
             build_Tp_targets(tsample, PoN)
 
 if config["mode"] == "TvNp":
-    fname = "variant_call_list_TvNp.tsv"
     print(OKGREEN + "[message] Pipeline runs in Tumor vs Normal vs PoN mode." + ENDC)
-    if not os.path.isfile(fname):
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), fname)
-    print(OKGREEN + "[message] Configuration file variant_call_list_TvNp.tsv is detected. " + ENDC)
-    with open("variant_call_list_TvNp.tsv",'r') as fd: 
+    fname = "variant_call_list_TvNp.tsv"
+    with open(fname,'r') as fd: 
+        print(OKGREEN + "[message] Configuration file %s is detected. "%fname + ENDC)
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
         for row in rd:
             tsample = row[0]
@@ -153,7 +147,7 @@ if config["mode"] == "T":
                 TSAMPLE.append(tsample)
                 build_Tonly_targets(tsample)
     else: 
-        print(OKGREEN + "[message] No configuration file is detected. " + ENDC)
+        print(OKGREEN + "[message] No configuration file is detected. All the samples in the directory DNA_samples will be used as Tumor samples." + ENDC)
         TSAMPLE, PAIRED = glob_wildcards("DNA_samples/{tsample,.+}_{paired,[012]}.fastq.gz")
         for tsample in TSAMPLE:
             build_Tonly_targets(tsample)
