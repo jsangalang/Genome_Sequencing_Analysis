@@ -3,7 +3,7 @@ rule get_variant_bed_pon:
     input:
         Mutect2_vcf = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz"
     output:
-        BED = "variant_bed_TvN/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.bed"
+        BED = temp("variant_bed_TvN/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.bed"),
     log:
         "logs/variant_bed_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.bed.log"
     params:
@@ -22,7 +22,7 @@ rule samtools_mpileup_pon:
         BAM = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
         BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai"
     output:
-        PILEUP = "pileup_TvN/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.pileup.gz"
+        PILEUP = temp("pileup_TvN/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.pileup.gz"),
     log:
         "logs/pileup_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.pileup.log"
     params:
@@ -42,7 +42,7 @@ rule split_Mutect2_pon:
         vcf_index = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz.tbi",
     output:
         interval_vcf_bcftools = temp("Mutect2_TvNp_oncotator_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}_bcftools.vcf.gz"),
-        interval_vcf = temp("Mutect2_TvNp_oncotator_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.gz")
+        interval_vcf          = temp("Mutect2_TvNp_oncotator_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.gz")
     params:
         queue = "shortq",
         bcftools = config["bcftools"]["app"],
@@ -81,7 +81,7 @@ rule concatenate_oncotator_pon:
     input:
         maf = expand("oncotator_TvNp_tmp/{{tsample}}_Vs_{{nsample}}_PON_{{panel_of_normal}}_ON_{mutect_interval}_annotated_TvNp.TCGAMAF", mutect_interval=mutect_intervals)
     output:
-        concatened_oncotator = "oncotator_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp.TCGAMAF",
+        concatened_oncotator = temp("oncotator_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp.TCGAMAF"),
         tmp_list = temp("oncotator_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_oncotator_tmp.list")
     params:
         queue = "shortq",
@@ -100,8 +100,8 @@ rule oncotator_reformat_TvN_pon:
     input:
         maf="oncotator_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp.TCGAMAF"
     output:
-        maf ="oncotator_TvNp_maf/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_selection.TCGAMAF",
-        tsv ="oncotator_TvNp_tsv/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp.tsv"
+        maf = "oncotator_TvNp_maf/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_selection.TCGAMAF",
+        tsv = temp("oncotator_TvNp_tsv/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp.tsv"),
     log:
         "logs/oncotator_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_selection.log"
     params:
@@ -119,7 +119,7 @@ rule oncotator_with_pileup_TvN_pon:
         tsv = "oncotator_TvNp_tsv/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp.tsv",
         pileup = "pileup_TvN/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN.pileup.gz"
     output:
-        tsv = "oncotator_TvNp_tsv_pileup/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_with_pileup.tsv"
+        tsv = temp("oncotator_TvNp_tsv_pileup/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_with_pileup.tsv")
     log:
         "logs/oncotator/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_with_pileup.log"
     params:

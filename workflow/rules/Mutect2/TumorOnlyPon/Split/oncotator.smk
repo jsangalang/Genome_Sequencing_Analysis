@@ -4,7 +4,7 @@ rule get_variant_bed_tumor_only_pon:
         Mutect2_vcf = "Mutect2_Tp/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp.vcf.gz",
         Mutect2_vcf_index = "Mutect2_Tp/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp.vcf.gz.tbi",
     output:
-        BED = "variant_bed_Tp/{tsample}_PON_{panel_of_normal}_Tp.bed"
+        BED = temp("variant_bed_Tp/{tsample}_PON_{panel_of_normal}_Tp.bed")
     log:
         "logs/variant_bed_Tp/{tsample}_PON_{panel_of_normal}_Tp.bed.log"
     params:
@@ -23,7 +23,7 @@ rule samtools_mpileup_tumor_only_pon:
         BAM = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
         BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai"
     output:
-        PILEUP = "pileup_Tp/{tsample}_PON_{panel_of_normal}_Tp.pileup.gz"
+        PILEUP = temp("pileup_Tp/{tsample}_PON_{panel_of_normal}_Tp.pileup.gz")
     log:
         "logs/pileup_Tp/{tsample}_PON_{panel_of_normal}_Tp.pileup.log"
     params:
@@ -43,7 +43,7 @@ rule split_Mutect2_tumor_only_pon:
         vcf_index = "Mutect2_Tp/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp.vcf.gz.tbi",
     output:
         interval_vcf_bcftools = temp("Mutect2_Tp_oncotator_tmp/{tsample}_PON_{panel_of_normal}_Tp_ON_{interval}_bcftools.vcf.gz"),
-        interval_vcf = temp("Mutect2_Tp_oncotator_tmp/{tsample}_PON_{panel_of_normal}_Tp_ON_{interval}.vcf.gz")
+        interval_vcf          = temp("Mutect2_Tp_oncotator_tmp/{tsample}_PON_{panel_of_normal}_Tp_ON_{interval}.vcf.gz")
     params:
         queue = "shortq",
         bcftools = config["bcftools"]["app"],
@@ -82,8 +82,8 @@ rule concatenate_oncotator_tumor_only_pon:
     input:
         maf = expand("oncotator_Tp_tmp/{{tsample}}_PON_{{panel_of_normal}}_ON_{mutect_interval}_annotated_Tp.TCGAMAF", mutect_interval=mutect_intervals)
     output:
-        concatened_oncotator = "oncotator_Tp/{tsample}_PON_{panel_of_normal}_annotated_Tp.TCGAMAF",
-        tmp_list = temp("oncotator_Tp_tmp/{tsample}_PON_{panel_of_normal}_Tp_oncotator_tmp.list")
+        concatened_oncotator = temp("oncotator_Tp/{tsample}_PON_{panel_of_normal}_annotated_Tp.TCGAMAF"),
+        tmp_list = temp("oncotator_Tp_tmp/{tsample}_PON_{panel_of_normal}_Tp_oncotator_tmp.list"),
     params:
         queue = "shortq",
         merge = config["oncotator"]["scripts"]["merge_oncotator"],
@@ -101,8 +101,8 @@ rule oncotator_reformat_tumor_only_pon:
     input:
         maf="oncotator_Tp/{tsample}_PON_{panel_of_normal}_annotated_Tp.TCGAMAF"
     output:
-        maf ="oncotator_Tp_maf/{tsample}_PON_{panel_of_normal}_Tp_selection.TCGAMAF",
-        tsv ="oncotator_Tp_tsv/{tsample}_PON_{panel_of_normal}_Tp.tsv"
+        maf = "oncotator_Tp_maf/{tsample}_PON_{panel_of_normal}_Tp_selection.TCGAMAF",
+        tsv = temp("oncotator_Tp_tsv/{tsample}_PON_{panel_of_normal}_Tp.tsv")
     log:
         "logs/oncotator/{tsample}_PON_{panel_of_normal}_Tp_selection.log"
     params:
@@ -120,7 +120,7 @@ rule oncotator_with_pileup_tumor_only_pon:
         tsv = "oncotator_Tp_tsv/{tsample}_PON_{panel_of_normal}_Tp.tsv",
         pileup = "pileup_Tp/{tsample}_PON_{panel_of_normal}_Tp.pileup.gz"
     output:
-        tsv = "oncotator_Tp_tsv_pileup/{tsample}_PON_{panel_of_normal}_Tp_with_pileup.tsv"
+        tsv = temp("oncotator_Tp_tsv_pileup/{tsample}_PON_{panel_of_normal}_Tp_with_pileup.tsv")
     log:
         "logs/oncotator/{tsample}_PON_{panel_of_normal}_Tp_with_pileup.log"
     params:

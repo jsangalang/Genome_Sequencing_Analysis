@@ -10,9 +10,9 @@ rule Mutect2_tumor_only:
         tumor_bam = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
         tumor_bai = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai",
     output:
-        VCF = "Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz",
-        INDEX = "Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz.tbi",
-        STATS = "Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz.stats"
+        VCF   = temp("Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz"),
+        INDEX = temp("Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz.tbi"),
+        STATS = temp("Mutect2_T_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz.stats"),
     params:
         queue = "mediumq",
         gatk        = config["gatk"]["app"],
@@ -40,8 +40,8 @@ rule concatenate_mutect2_tumor_only:
     input:
         vcfs = expand("Mutect2_T_tmp/{{tsample}}_tumor_only_T_ON_{mutect_interval}.vcf.gz", mutect_interval=mutect_intervals)
     output:
-        concatened_vcf = "Mutect2_T/{tsample}_tumor_only_T.vcf.gz",
-        vcf_liste = "mutect2_T_tmp_list/{tsample}_tumor_only_T_mutect2_tmp.list"
+        concatened_vcf = temp("Mutect2_T/{tsample}_tumor_only_T.vcf.gz"),
+        vcf_liste      = temp("mutect2_T_tmp_list/{tsample}_tumor_only_T_mutect2_tmp.list"),
     params:
         queue = "shortq",
         gatk = config["gatk"]["app"]
@@ -58,8 +58,8 @@ rule concatenate_mutect2_tumor_only_stats:
     input:
         vcfs = expand("Mutect2_T_tmp/{{tsample}}_tumor_only_T_ON_{mutect_interval}.vcf.gz.stats", mutect_interval=mutect_intervals)
     output:
-        concatened_stats = "Mutect2_T/{tsample}_tumor_only_T.vcf.gz.stats",
-        stat_liste = "mutect2_T_tmp_list/{tsample}_tumor_only_T_mutect2_tmp_stats.list"
+        concatened_stats = temp("Mutect2_T/{tsample}_tumor_only_T.vcf.gz.stats"),
+        stat_liste       = temp("mutect2_T_tmp_list/{tsample}_tumor_only_T_mutect2_tmp_stats.list"),
     params:
         queue = "shortq",
         gatk = config["gatk"]["app"]
@@ -82,8 +82,8 @@ rule filter_mutect_calls_tumor_only:
         Mutect2_stats = "Mutect2_T/{tsample}_tumor_only_T.vcf.gz.stats",
         contamination_table = "cross_sample_contamination/{tsample}_calculatecontamination.table",
     output:
-        VCF = "Mutect2_T/{tsample}_tumor_only_filtered_T.vcf.gz",
-        INDEX = "Mutect2_T/{tsample}_tumor_only_filtered_T.vcf.gz.tbi"
+        VCF   = temp("Mutect2_T/{tsample}_tumor_only_filtered_T.vcf.gz"),
+        INDEX = temp("Mutect2_T/{tsample}_tumor_only_filtered_T.vcf.gz.tbi"),
     params:
         queue = "mediumq",
         gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
@@ -107,8 +107,8 @@ rule Filter_By_Orientation_Bias_tumor_only:
         Mutect2_vcf = "Mutect2_T/{tsample}_tumor_only_filtered_T.vcf.gz",
         pre_adapter_detail_metrics = "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.pre_adapter_detail_metrics.txt"
     output:
-        filtered_vcf = "Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz",
-        filtered_vcf_index = "Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz.tbi"
+        filtered_vcf       = temp("Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz"),
+        filtered_vcf_index = temp("Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz.tbi")
     params:
         queue = "mediumq",
         gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",

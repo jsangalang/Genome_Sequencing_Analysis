@@ -8,9 +8,9 @@ rule Mutect2_pon:
         norm_bam = "bam/{nsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{nsample}.recal.bam",
         norm_bai = "bam/{nsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{nsample}.recal.bam.bai",
     output:
-        VCF = "Mutect2_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.gz",
-        INDEX = "Mutect2_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.gz.tbi",
-        STATS = "Mutect2_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.gz.stats"
+        VCF   = temp("Mutect2_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.gz"),
+        INDEX = temp("Mutect2_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.gz.tbi"),
+        STATS = temp("Mutect2_TvNp_tmp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_ON_{interval}.vcf.gz.stats"),
     params:
         queue = "mediumq",
         gatk  = config["gatk"]["app"],
@@ -43,8 +43,8 @@ rule concatenate_mutect2_pon:
     input:
         vcfs = expand("Mutect2_TvNp_tmp/{{tsample}}_Vs_{{nsample}}_PON_{{panel_of_normal}}_TvNp_ON_{mutect_interval}.vcf.gz", mutect_interval=mutect_intervals),
     output:
-        concatened_vcf = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp.vcf.gz",
-        vcf_liste = "mutect2_TvNp_tmp_list/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_mutect2_tmp.list"
+        concatened_vcf = temp("Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp.vcf.gz"),
+        vcf_liste      = temp("mutect2_TvNp_tmp_list/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_mutect2_tmp.list"),
     params:
         queue = "shortq",
         gatk = config["gatk"]["app"],
@@ -61,8 +61,8 @@ rule concatenate_mutect2_pon_stats:
     input:
         vcfs = expand("Mutect2_TvNp_tmp/{{tsample}}_Vs_{{nsample}}_PON_{{panel_of_normal}}_TvNp_ON_{mutect_interval}.vcf.gz.stats", mutect_interval=mutect_intervals),
     output:
-        concatened_stats = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp.vcf.gz.stats",
-        stat_liste = "mutect2_TvNp_tmp_list/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_mutect2_tmp_stats.list"
+        concatened_stats = temp("Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp.vcf.gz.stats"),
+        stat_liste       = temp("mutect2_TvNp_tmp_list/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_mutect2_tmp_stats.list"),
     params:
         queue = "shortq",
         gatk = config["gatk"]["app"]
@@ -85,8 +85,8 @@ rule filter_mutect_calls_pon:
         Mutect2_stats = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp.vcf.gz.stats",
         contamination_table = "cross_sample_contamination/{tsample}_calculatecontamination.table",
     output:
-        VCF = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_filtered_TvNp.vcf.gz",
-        INDEX = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_filtered_TvNp.vcf.gz.tbi"
+        VCF   = temp("Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_filtered_TvNp.vcf.gz"),
+        INDEX = temp("Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_filtered_TvNp.vcf.gz.tbi"),
     params:
         queue = "mediumq",
         gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
@@ -110,8 +110,8 @@ rule Filter_By_Orientation_Bias_pon:
         Mutect2_vcf = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_filtered_TvNp.vcf.gz",
         pre_adapter_detail_metrics = "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.pre_adapter_detail_metrics.txt",
     output:
-        filtered_vcf = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz",
-        filtered_vcf_index = "Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz.tbi"
+        filtered_vcf       = temp("Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz"),
+        filtered_vcf_index = temp("Mutect2_TvNp/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp.vcf.gz.tbi"),
     params:
         queue = "mediumq",
         gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",

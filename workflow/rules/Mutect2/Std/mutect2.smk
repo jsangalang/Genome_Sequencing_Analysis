@@ -7,9 +7,9 @@ rule Mutect2:
         tumor_bai = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai",
         norm_bai = "bam/{nsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{nsample}.recal.bam.bai",
     output:
-        VCF = "Mutect2_TvN_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz",
-        INDEX = "Mutect2_TvN_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz.tbi",
-        STATS = "Mutect2_TvN_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz.stats"
+        VCF   = temp("Mutect2_TvN_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz"),
+        INDEX = temp("Mutect2_TvN_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz.tbi"),
+        STATS = temp("Mutect2_TvN_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz.stats"),
     params:
         queue = "mediumq",
         tumor_group = "{tsample}",
@@ -43,8 +43,8 @@ rule concatenate_mutect2:
     input:
         vcfs = expand("Mutect2_TvN_tmp/{{tsample}}_Vs_{{nsample}}_TvN_ON_{mutect_interval}.vcf.gz", mutect_interval=mutect_intervals)
     output:
-        concatened_vcf = "Mutect2_TvN/{tsample}_Vs_{nsample}_TvN.vcf.gz",
-        vcf_liste = "Mutect2_TvN_tmp_list/{tsample}_Vs_{nsample}_TvN_mutect2_tmp.list"
+        concatened_vcf = temp("Mutect2_TvN/{tsample}_Vs_{nsample}_TvN.vcf.gz"),
+        vcf_liste      = temp("Mutect2_TvN_tmp_list/{tsample}_Vs_{nsample}_TvN_mutect2_tmp.list"),
     params:
         queue = "shortq",
         gatk = config["gatk"]["app"]
@@ -62,8 +62,8 @@ rule concatenate_mutect2_stats:
     input:
         vcfs = expand("Mutect2_TvN_tmp/{{tsample}}_Vs_{{nsample}}_TvN_ON_{mutect_interval}.vcf.gz.stats", mutect_interval=mutect_intervals)
     output:
-        concatened_stats = "Mutect2_TvN/{tsample}_Vs_{nsample}_TvN.vcf.gz.stats",
-        stat_liste = "Mutect2_TvN_tmp_list/{tsample}_Vs_{nsample}_TvN_mutect2_tmp_stats.list"
+        concatened_stats = temp("Mutect2_TvN/{tsample}_Vs_{nsample}_TvN.vcf.gz.stats"),
+        stat_liste       = temp("Mutect2_TvN_tmp_list/{tsample}_Vs_{nsample}_TvN_mutect2_tmp_stats.list"),
     params:
         queue = "shortq",
         gatk = config["gatk"]["app"]
@@ -86,8 +86,8 @@ rule filter_mutect_calls:
         Mutect2_stats = "Mutect2_TvN/{tsample}_Vs_{nsample}_TvN.vcf.gz.stats",
         contamination_table = "cross_sample_contamination/{tsample}_calculatecontamination.table",
     output:
-        VCF = "Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz",
-        INDEX = "Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz.tbi"
+        VCF   = temp("Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz"),
+        INDEX = temp("Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz.tbi"),
     params:
         queue = "mediumq",
         # gatk  = config["gatk"]["app"],
@@ -111,8 +111,8 @@ rule Filter_By_Orientation_Bias:
         Mutect2_vcf = "Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz",
         pre_adapter_detail_metrics = "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.pre_adapter_detail_metrics.txt"
     output:
-        filtered_vcf = "Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz",
-        filtered_vcf_index = "Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz.tbi"
+        filtered_vcf       = temp("Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz"),
+        filtered_vcf_index = temp("Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz.tbi"),
     params:
         queue = "mediumq",
         gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",

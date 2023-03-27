@@ -3,7 +3,7 @@ rule get_variant_bed:
     input:
         Mutect2_vcf = "Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz"
     output:
-        BED = "variant_bed_TvN/{tsample}_Vs_{nsample}_TvN.bed"
+        BED = temp("variant_bed_TvN/{tsample}_Vs_{nsample}_TvN.bed"),
     log:
         "logs/variant_bed_TvN/{tsample}_Vs_{nsample}_TvN.bed.log"
     params:
@@ -22,7 +22,7 @@ rule samtools_mpileup:
         BAM = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
         BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai"
     output:
-        PILEUP = "pileup_TvN/{tsample}_Vs_{nsample}_TvN.pileup.gz"
+        PILEUP = temp("pileup_TvN/{tsample}_Vs_{nsample}_TvN.pileup.gz"),
     log:
         "logs/pileup_TvN/{tsample}_Vs_{nsample}_TvN.pileup.log"
     params:
@@ -42,7 +42,7 @@ rule split_Mutect2:
         vcf_index   = "Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz.tbi",
     output:
         interval_vcf_bcftools = temp("Mutect2_TvN_oncotator_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}_bcftools.vcf.gz"),
-        interval_vcf = temp("Mutect2_TvN_oncotator_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz")
+        interval_vcf          = temp("Mutect2_TvN_oncotator_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz"),
     params:
         queue    = "shortq",
         bcftools = config["bcftools"]["app"],
@@ -60,9 +60,9 @@ rule split_Mutect2:
 # A rule to annotate mutect2 tumor versus normal results with oncotator  
 rule oncotator:
     input:
-        interval_vcf = "Mutect2_TvN_oncotator_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz"
+        interval_vcf = "Mutect2_TvN_oncotator_tmp/{tsample}_Vs_{nsample}_TvN_ON_{interval}.vcf.gz",
     output:
-        MAF = temp("oncotator_TvN_tmp/{tsample}_Vs_{nsample}_ON_{interval}_annotated_TvN.TCGAMAF")
+        MAF = temp("oncotator_TvN_tmp/{tsample}_Vs_{nsample}_ON_{interval}_annotated_TvN.TCGAMAF"),
     params:
         queue = "mediumq",
         oncotator = config["oncotator"]["app"],
@@ -82,8 +82,8 @@ rule concatenate_oncotator:
     input:
         maf = expand("oncotator_TvN_tmp/{{tsample}}_Vs_{{nsample}}_ON_{mutect_interval}_annotated_TvN.TCGAMAF", mutect_interval=mutect_intervals)
     output:
-        concatened_oncotator = "oncotator_TvN/{tsample}_Vs_{nsample}_annotated_TvN.TCGAMAF",
-        tmp_list = temp( "oncotator_TvN_tmp/{tsample}_Vs_{nsample}_TvN_oncotator_tmp.list"),
+        concatened_oncotator = temp("oncotator_TvN/{tsample}_Vs_{nsample}_annotated_TvN.TCGAMAF"),
+        tmp_list             = temp("oncotator_TvN_tmp/{tsample}_Vs_{nsample}_TvN_oncotator_tmp.list"),
     params:
         queue = "shortq",
         merge = config["oncotator"]["scripts"]["merge_oncotator"],
@@ -99,10 +99,10 @@ rule concatenate_oncotator:
 ## A rule to simplify oncotator output on tumor vs normal samples
 rule oncotator_reformat_TvN:
     input:
-        maf="oncotator_TvN/{tsample}_Vs_{nsample}_annotated_TvN.TCGAMAF"
+        maf = "oncotator_TvN/{tsample}_Vs_{nsample}_annotated_TvN.TCGAMAF"
     output:
-        maf ="oncotator_TvN_maf/{tsample}_Vs_{nsample}_TvN_selection.TCGAMAF",
-        tsv ="oncotator_TvN_tsv/{tsample}_Vs_{nsample}_TvN.tsv"
+        maf = "oncotator_TvN_maf/{tsample}_Vs_{nsample}_TvN_selection.TCGAMAF",
+        tsv = temp("oncotator_TvN_tsv/{tsample}_Vs_{nsample}_TvN.tsv"),
     log:
         "logs/oncotator/{tsample}_Vs_{nsample}_TvN_selection.log"
     params:
@@ -117,10 +117,10 @@ rule oncotator_reformat_TvN:
 ## A rule to cross oncotator output on tumor vs normal samples with pileup information
 rule oncotator_with_pileup_TvN:
     input:
-        tsv = "oncotator_TvN_tsv/{tsample}_Vs_{nsample}_TvN.tsv",
-        pileup = "pileup_TvN/{tsample}_Vs_{nsample}_TvN.pileup.gz"
+        tsv    = "oncotator_TvN_tsv/{tsample}_Vs_{nsample}_TvN.tsv",
+        pileup = "pileup_TvN/{tsample}_Vs_{nsample}_TvN.pileup.gz",
     output:
-        tsv = "oncotator_TvN_tsv_pileup/{tsample}_Vs_{nsample}_TvN_with_pileup.tsv"
+        tsv = temp("oncotator_TvN_tsv_pileup/{tsample}_Vs_{nsample}_TvN_with_pileup.tsv"),
     log:
         "logs/oncotator/{tsample}_Vs_{nsample}_TvN_with_pileup.log"
     params:

@@ -4,9 +4,9 @@ if config["paired"] == False:
         input:
             fastq_0="DNA_samples/{sample}_0.fastq.gz",
         output:
-            fastq_clean='DNA_samples_clean/{sample}_0.fastq.gz',
-            html_report='fastp_reports/{sample}_fastp_report.html',
-            json_report='fastp_reports/{sample}_fastp_report.json'
+            fastq_clean = temp('DNA_samples_clean/{sample}_0.fastq.gz'),
+            html_report = 'fastp_reports/{sample}_fastp_report.html',
+            json_report = 'fastp_reports/{sample}_fastp_report.json'
         log:
             "logs/fastp/{sample}_fastp.html.log"
         params:
@@ -27,10 +27,10 @@ elif config["paired"] == True:
             fastq_1="DNA_samples/{sample}_1.fastq.gz",
             fastq_2="DNA_samples/{sample}_2.fastq.gz",
         output:
-            fastq_clean_1='DNA_samples_clean/{sample}_1.fastq.gz',
-            fastq_clean_2='DNA_samples_clean/{sample}_2.fastq.gz',
-            html_report='fastp_reports/{sample}_fastp_report.html',
-            json_report='fastp_reports/{sample}_fastp_report.json'
+            fastq_clean_1 = temp('DNA_samples_clean/{sample}_1.fastq.gz'),
+            fastq_clean_2 = temp('DNA_samples_clean/{sample}_2.fastq.gz'),
+            html_report   = 'fastp_reports/{sample}_fastp_report.html',
+            json_report   = 'fastp_reports/{sample}_fastp_report.json'
         log:
             "logs/fastp/{sample}_fastp.html.log"
         params:

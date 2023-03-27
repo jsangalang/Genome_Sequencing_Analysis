@@ -22,7 +22,7 @@ rule sort_exom_mutect2_pon:
     input:
         Mutect2_vcf = "Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom_unsorted.vcf.gz"
     output:
-        exom_Mutect2 = "Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom.vcf.gz"
+        exom_Mutect2 = temp("Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom.vcf.gz"),
     log:
         "logs/Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_sort.log"
     params:
@@ -41,7 +41,7 @@ rule index_exom_mutect2_pon:
     input:
         exom_Mutect2 = "Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom.vcf.gz"
     output:
-        exom_Mutect2 = "Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom.vcf.gz.tbi"
+        exom_Mutect2 = temp("Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom.vcf.gz.tbi")
     log:
         "logs/Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_index.log"
     params:
@@ -60,7 +60,7 @@ rule get_variant_bed_pon_exom:
         Mutect2_vcf = "Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom.vcf.gz",
         Mutect2_vcf_index = "Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom.vcf.gz.tbi"
     output:
-        BED = "variant_bed_TvN_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_exom.bed"
+        BED = temp("variant_bed_TvN_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_exom.bed")
     log:
         "logs/variant_bed_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_exom.bed.log"
     params:
@@ -79,7 +79,7 @@ rule samtools_mpileup_pon_exom:
         BAM = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
         BAI = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai"
     output:
-        PILEUP = "pileup_TvN_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_exom.pileup.gz"
+        PILEUP = temp("pileup_TvN_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_exom.pileup.gz")
     log:
         "logs/pileup_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_exom.pileup.log"
     params:
@@ -98,7 +98,7 @@ rule oncotator_pon_exom:
         Mutect2_vcf = "Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom.vcf.gz",
         Mutect2_vcf_index = "Mutect2_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_twicefiltered_TvNp_exom.vcf.gz.tbi",
     output:
-        MAF="oncotator_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_exom.TCGAMAF"
+        MAF = temp("oncotator_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_exom.TCGAMAF")
     params:
         queue = "mediumq",
         DB    = config["oncotator"][config["samples"]]["DB"],
@@ -117,8 +117,8 @@ rule oncotator_reformat_TvN_pon_exom:
     input:
         maf="oncotator_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_exom.TCGAMAF"
     output:
-        maf ="oncotator_TvNp_maf_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_selection_exom.TCGAMAF",
-        tsv ="oncotator_TvNp_tsv_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_exom.tsv"
+        maf = "oncotator_TvNp_maf_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_selection_exom.TCGAMAF",
+        tsv = temp("oncotator_TvNp_tsv_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_exom.tsv")
     log:
         "logs/oncotator_TvNp_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_selection_exom.log"
     params:    
@@ -136,7 +136,7 @@ rule oncotator_with_pileup_TvN_pon_exom:
         tsv = "oncotator_TvNp_tsv_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_exom.tsv",
         pileup = "pileup_TvN_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvN_exom.pileup.gz"
     output:
-        tsv = "oncotator_TvNp_tsv_pileup_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_with_pileup_exom.tsv"
+        tsv = temp("oncotator_TvNp_tsv_pileup_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_TvNp_with_pileup_exom.tsv")
     log:
         "logs/oncotator_exom/{tsample}_Vs_{nsample}_PON_{panel_of_normal}_annotated_TvNp_with_pileup_exom.log"
     params:
