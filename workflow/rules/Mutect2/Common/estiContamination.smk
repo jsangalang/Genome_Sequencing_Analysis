@@ -4,7 +4,7 @@ rule get_pileup_summaries:
         tumor_bam = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
         tumor_bai = "bam/{tsample}.nodup.recal.bam.bai" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam.bai",
     output:
-        "cross_sample_contamination/{tsample}_getpileupsummaries.table"
+        temp("cross_sample_contamination/{tsample}_getpileupsummaries.table")
     params:
         queue = "mediumq",
         gatk  = config["gatk"]["app"],
@@ -26,7 +26,7 @@ rule calculate_contamination:
     input:
         table = "cross_sample_contamination/{tsample}_getpileupsummaries.table",
     output:
-        "cross_sample_contamination/{tsample}_calculatecontamination.table"
+        temp("cross_sample_contamination/{tsample}_calculatecontamination.table")
     params:
         queue = "mediumq",
         gatk  = config["gatk"]["app"]

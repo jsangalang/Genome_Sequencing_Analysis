@@ -3,11 +3,11 @@ rule Collect_Sequencing_Artifact_Metrics:
     input :
         tumor_bam = "bam/{tsample}.nodup.recal.bam" if config["remove_duplicates"] == True else "bam/{tsample}.recal.bam",
     output:
-        "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.bait_bias_detail_metrics.txt",
-        "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.bait_bias_summary_metrics.txt",
-        "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.error_summary_metrics.txt",
-        "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.pre_adapter_detail_metrics.txt",
-        "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.pre_adapter_summary_metrics.txt"      
+        temp("collect_Sequencing_Artifact_Metrics/{tsample}_artifact.bait_bias_detail_metrics.txt"),
+        temp("collect_Sequencing_Artifact_Metrics/{tsample}_artifact.bait_bias_summary_metrics.txt"),
+        temp("collect_Sequencing_Artifact_Metrics/{tsample}_artifact.error_summary_metrics.txt"),
+        temp("collect_Sequencing_Artifact_Metrics/{tsample}_artifact.pre_adapter_detail_metrics.txt"),
+        temp("collect_Sequencing_Artifact_Metrics/{tsample}_artifact.pre_adapter_summary_metrics.txt"),
     params:
         queue = "mediumq",
         gatk  = config["gatk"]["app"],
