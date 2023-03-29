@@ -90,7 +90,6 @@ rule filter_mutect_calls:
         INDEX = temp("Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz.tbi"),
     params:
         queue = "mediumq",
-        # gatk  = config["gatk"]["app"],
         gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",
         index = config["gatk"][config["samples"]]["genome_fasta"],
     log:
@@ -109,6 +108,7 @@ rule filter_mutect_calls:
 rule Filter_By_Orientation_Bias:
     input :
         Mutect2_vcf = "Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz",
+        Mutect2_idx = "Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz.tbi",
         pre_adapter_detail_metrics = "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.pre_adapter_detail_metrics.txt"
     output:
         filtered_vcf       = temp("Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz"),
