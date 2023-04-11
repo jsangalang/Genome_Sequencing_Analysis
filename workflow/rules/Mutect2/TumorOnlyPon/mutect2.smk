@@ -108,8 +108,8 @@ rule Filter_By_Orientation_Bias_tumor_only_pon:
         Mutect2_vcf = "Mutect2_Tp/{tsample}_PON_{panel_of_normal}_filtered_Tp.vcf.gz",
         pre_adapter_detail_metrics = "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.pre_adapter_detail_metrics.txt",
     output:
-        filtered_vcf       = temp("Mutect2_Tp/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp.vcf.gz"),
-        filtered_vcf_index = temp("Mutect2_Tp/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp.vcf.gz.tbi"),
+        filtered_vcf       = "Mutect2_Tp/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp.vcf.gz",
+        filtered_vcf_index = "Mutect2_Tp/{tsample}_PON_{panel_of_normal}_twicefiltered_Tp.vcf.gz.tbi",
     params:
         queue= "mediumq",
         gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",

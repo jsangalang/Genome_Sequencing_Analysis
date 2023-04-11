@@ -111,8 +111,8 @@ rule Filter_By_Orientation_Bias:
         Mutect2_idx = "Mutect2_TvN/{tsample}_Vs_{nsample}_filtered_TvN.vcf.gz.tbi",
         pre_adapter_detail_metrics = "collect_Sequencing_Artifact_Metrics/{tsample}_artifact.pre_adapter_detail_metrics.txt"
     output:
-        filtered_vcf       = temp("Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz"),
-        filtered_vcf_index = temp("Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz.tbi"),
+        filtered_vcf       = "Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz",
+        filtered_vcf_index = "Mutect2_TvN/{tsample}_Vs_{nsample}_twicefiltered_TvN.vcf.gz.tbi",
     params:
         queue = "mediumq",
         gatk = "/mnt/beegfs/software/gatk/4.1.4.1/gatk",

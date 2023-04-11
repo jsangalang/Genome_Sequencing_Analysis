@@ -30,20 +30,20 @@ rule samtools_mpileup_tumor_only:
         queue = "mediumq",
         samtools = config["samtools"]["app"],
         genome_ref_fasta = config["gatk"][config["samples"]]["genome_fasta"],
-    threads : 8
+    threads : 2
     resources:
         mem_mb = 20480
     shell:
-        '{params.samtools} mpileup -@ {threads} -a -B -l {input.BED} -f {params.genome_ref_fasta} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
+        '{params.samtools} mpileup -a -B -l {input.BED} -f {params.genome_ref_fasta} {input.BAM} | gzip - > {output.PILEUP} 2> {log}'
  
 ## A rule to split mutect2 results in pieces 
 rule split_Mutect2_tumor_only:
     input:
         Mutect2_vcf = "Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz",
-        vcf_index = "Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz.tbi",
+        vcf_index   = "Mutect2_T/{tsample}_tumor_only_twicefiltered_T.vcf.gz.tbi",
     output:
         interval_vcf_bcftools = temp("Mutect2_T_oncotator_tmp/{tsample}_tumor_only_T_ON_{interval}_bcftools.vcf.gz"),
-        interval_vcf = temp("Mutect2_T_oncotator_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz")
+        interval_vcf          = temp("Mutect2_T_oncotator_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz")
     params:
         queue = "shortq",
         bcftools = config["bcftools"]["app"],
@@ -55,18 +55,18 @@ rule split_Mutect2_tumor_only:
     resources:
         mem_mb = 20480
     shell:
-        '{params.bcftools} view -l 9 -R {input.interval} -o {output.interval_vcf_bcftools} {input.Mutect2_vcf} 2> {log}  &&' 
-        ' python {params.reformat_script} {output.interval_vcf_bcftools} {output.interval_vcf} 2>> {log}'  
+        '{params.bcftools} view -l 9 -R {params.interval} -o {output.interval_vcf_bcftools} {input.Mutect2_vcf} 2> {log}  &&' 
+        ' python {params.reformat} {output.interval_vcf_bcftools} {output.interval_vcf} 2>> {log}'  
  
 # A rule to annotate mutect2 tumor only results with oncotator 
 rule oncotator_tumor_only:
     input:
-        interval_vcf = "Mutect2_T_oncotator_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz"
+        interval_vcf = "Mutect2_T_oncotator_tmp/{tsample}_tumor_only_T_ON_{interval}.vcf.gz",
     output:
         MAF = temp("oncotator_T_tmp/{tsample}_tumor_only_ON_{interval}_annotated_T.TCGAMAF")
     params:
-        queue = "mediumq",
         oncotator = config["oncotator"]["app"],
+        queue = "mediumq",
         DB    = config["oncotator"][config["samples"]]["DB"],
         ref   = config["oncotator"][config["samples"]]["ref"],
     log:
@@ -75,7 +75,7 @@ rule oncotator_tumor_only:
     resources:
         mem_mb = 10240
     shell:
-        'oncotator --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={input.ONCOTATOR_DB} {input.interval_vcf} {output.MAF} {params.ref} 2> {log}'
+        'oncotator --input_format=VCF --output_format=TCGAMAF --tx-mode EFFECT --db-dir={params.DB} {input.interval_vcf} {output.MAF} {params.ref} 2> {log}'
 
 # concatenate oncotator T_only
 rule concatenate_oncotator_tumor_only:
@@ -94,7 +94,7 @@ rule concatenate_oncotator_tumor_only:
         "logs/merge_oncotator/{tsample}_tumor_only_annotated_T.log"
     shell :
         "ls -1a oncotator_T_tmp/{wildcards.tsample}_tumor_only_ON_*_annotated_T.TCGAMAF > oncotator_T_tmp/{wildcards.tsample}_T_oncotator_tmp.list && "
-        "python2.7  {params.merge_oncotator} {output.tmp_list} {output.concatened_oncotator} 2> {log}" 
+        "python2.7  {params.merge} {output.tmp_list} {output.concatened_oncotator} 2> {log}" 
 
 ## A rule to simplify oncotator output on tumor only samples
 rule oncotator_reformat_tumor_only:
@@ -150,5 +150,5 @@ rule oncotator_with_COSMIC_tumor_only:
     resources:
         mem_mb = 10240
     shell:
-        'python2.7 {params.oncotator_cross_cosmic}  {input.tsv} {output.tsv} {params.cosmic_mutation} {params.cancer_census_oncogene} {params.cancer_census_tumorsupressor} 2> {log}'
+        'python2.7 {params.cross_cosmic}  {input.tsv} {output.tsv} {params.cosmic_mutation} {params.cancer_census_oncogene} {params.cancer_census_tumorsupressor} 2> {log}'
 

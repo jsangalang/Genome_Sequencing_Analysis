@@ -147,24 +147,29 @@ if config["mode"] == "T":
                 TSAMPLE.append(tsample)
                 build_Tonly_targets(tsample)
     else: 
-        print(OKGREEN + "[message] No configuration file is detected. All the samples in the directory DNA_samples will be used as Tumor samples." + ENDC)
-        TSAMPLE, PAIRED = glob_wildcards("DNA_samples/{tsample,.+}_{paired,[012]}.fastq.gz")
+        print(OKGREEN + "[message] No configuration file is detected." + ENDC)
+        if os.path.isdir("DNA_samples"):
+            print(OKGREEN + "[message] Samples in the directory DNA_samples will be used as Tumor samples." + ENDC)
+            TSAMPLE, PAIRED = glob_wildcards("DNA_samples/{tsample,.+}_{paired,[012]}.fastq.gz")
+        elif os.path.isdir("bam"):
+            print(OKGREEN + "[message] Samples in the directory bam will be used as Tumor samples." + ENDC)
+            TSAMPLE, = glob_wildcards("bam/{tsample,.+}.nodup.recal.bam")
         for tsample in TSAMPLE:
             build_Tonly_targets(tsample)
         
 rule all:
     input:
-        expand('fastq_QC_raw/{sample}_fastqc.html', sample = FASTQ),
-        expand('fastq_QC_clean/{sample}_fastqc.html', sample =  FASTQ),
-        expand('bam/{sample}.nodup.recal.bam', sample =  NSAMPLE + TSAMPLE),
+        # expand('fastq_QC_raw/{sample}_fastqc.html', sample = FASTQ),
+        # expand('fastq_QC_clean/{sample}_fastqc.html', sample =  FASTQ),
+        expand('bam/{sample}.nodup.recal.bam', sample = TSAMPLE + NSAMPLE),
         # expand("BQSR/{sample}_BQSR_report.pdf", sample = TSAMPLE + NSAMPLE),
-        expand(FACETS),
-        expand(CNV_FACETS),
-        expand("haplotype_caller_filtered/{sample}_germline_variants_filtered.vcf.gz", sample = NSAMPLE + TSAMPLE),
-        expand("annovar/{sample}.avinput", sample = NSAMPLE + TSAMPLE if config["samples"] == "human" else []),
-        expand('mapping_QC/HsMetrics/{sample}_HsMetrics.tsv', sample = TSAMPLE + NSAMPLE),
-        expand("mapping_QC/flagstat/{sample}_flagstat.txt",   sample = TSAMPLE + NSAMPLE),
-        expand("mapping_QC/mosdepth/{sample}.mosdepth.global.dist.txt", sample = TSAMPLE + NSAMPLE),
+        # expand(FACETS),
+        # expand(CNV_FACETS),
+        # expand("haplotype_caller_filtered/{sample}_germline_variants_filtered.vcf.gz", sample = TSAMPLE + NSAMPLE),
+        # expand("annovar/{sample}.avinput", sample = TSAMPLE + NSAMPLE if config["samples"] == "human" else []),
+        # expand('mapping_QC/HsMetrics/{sample}_HsMetrics.tsv', sample = TSAMPLE + NSAMPLE),
+        # expand("mapping_QC/flagstat/{sample}_flagstat.txt",   sample = TSAMPLE + NSAMPLE),
+        # expand("mapping_QC/mosdepth/{sample}.mosdepth.global.dist.txt", sample = TSAMPLE + NSAMPLE),
         expand(MUTECT2),
         expand(ONCOTATOR),
         expand(ONCOTATOR_EXOM),

@@ -22,7 +22,7 @@ rule sort_exom_mutect2_tumor_only:
     input:
         Mutect2_vcf = "Mutect2_T_exom/{tsample}_tumor_only_twicefiltered_T_exom_unsorted.vcf.gz"
     output:
-        exom_Mutect2 = "Mutect2_T_exom/{tsample}_tumor_only_twicefiltered_T_exom.vcf.gz"
+        exom_gz  = "Mutect2_T_exom/{tsample}_tumor_only_twicefiltered_T_exom.vcf.gz",
     log:
         "logs/Mutect2_T_exom/{tsample}_tumor_only_T_sort.log"
     params:
@@ -32,9 +32,9 @@ rule sort_exom_mutect2_tumor_only:
     resources:
         mem_mb = 5000
     shell:
-        'bgzip -d {input.Mutect2_vcf} 2>> log && '
-        '{params.vcfsort} Mutect2_T_exom/{wildcards.tsample}_tumor_only_twicefiltered_T_exom_unsorted.vcf > Mutect2_T_exom/{wildcards.tsample}_tumor_only_twicefiltered_T_exom.vcf  2>> log && '
-        'bgzip Mutect2_T_exom/{wildcards.tsample}_tumor_only_twicefiltered_T_exom.vcf 2>> log'
+        'bgzip -d {input.Mutect2_vcf} 2> {log} && '
+        '{params.vcfsort} Mutect2_T_exom/{wildcards.tsample}_tumor_only_twicefiltered_T_exom_unsorted.vcf > Mutect2_T_exom/{wildcards.tsample}_tumor_only_twicefiltered_T_exom.vcf  2>> {log} && '
+        'bgzip Mutect2_T_exom/{wildcards.tsample}_tumor_only_twicefiltered_T_exom.vcf 2>> {log} '
         
 # A rule to generate a bed from mutect2 vcf, on tumor only 
 rule index_exom_mutect2_tumor_only:
@@ -52,7 +52,8 @@ rule index_exom_mutect2_tumor_only:
     resources:
         mem_mb = 1000
     shell:
-        '{params.gatk} IndexFeatureFile -F {input.exom_Mutect2} 2> {log}'
+        # '{params.gatk} IndexFeatureFile -F {input.exom_Mutect2} 2> {log}' 
+        '{params.gatk} IndexFeatureFile -I {input.exom_Mutect2} 2> {log}'
         
 # A rule to generate a bed from mutect2 vcf, on tumor only 
 rule get_variant_bed_tumor_only_exom:
