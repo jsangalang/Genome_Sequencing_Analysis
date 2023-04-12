@@ -15,9 +15,9 @@ $ git pull
 ```
 - Step 1. create conda envirements 
 ```
-$ conda env create -f META_PRISM_conda_env.txt -n META_PRISM
-$ conda env create -f Mouse_env.txt -n Mouse
-$ conda env create -f pipeline_GATK_2.1.4_conda_env.txt -n pipeline_GATK_2.1.4_V2
+$ conda env create -f ./Genome_Sequencing_Analysis/workflow/envs/META_PRISM_conda_env.txt -n META_PRISM
+$ conda env create -f ./Genome_Sequencing_Analysis/workflow/envs/Mouse_env.txt -n Mouse
+$ conda env create -f ./Genome_Sequencing_Analysis/workflow/envs/pipeline_GATK_2.1.4_conda_env.txt -n pipeline_GATK_2.1.4_V2
 ```
 - Step 2. deploy workflow
 
