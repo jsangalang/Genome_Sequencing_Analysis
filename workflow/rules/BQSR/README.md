@@ -1,6 +1,6 @@
-### Description of BQSR Module
+### 1. Description of BQSR Module
 
-### Description of Interfaces and Dependencies
+### 2. Description of Interfaces and Dependencies
 
 #### Specifications of Input Files
 
@@ -10,4 +10,4 @@
 
 #### Packages and Versions
 
-### Issues and TODO
+### 3. Issues and TODO
