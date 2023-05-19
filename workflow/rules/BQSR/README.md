@@ -2,12 +2,12 @@
 
 ### 2. Description of Interfaces and Dependencies
 
-#### Specifications of Input Files
+#### - Specifications of Input Files
 
-#### Ouput Files
+#### - Ouput Files
 
-#### Genome Reference
+#### - Genome Reference
 
-#### Packages and Versions
+#### - Packages and Versions
 
 ### 3. Issues and TODO
