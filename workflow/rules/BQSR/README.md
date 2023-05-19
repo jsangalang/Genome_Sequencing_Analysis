@@ -1,12 +1,13 @@
 ### Description of BQSR Module
 
-
 ### Description of Interfaces and Dependencies
 
-#### Input
+#### Specifications of Input Files
 
-#### Ouput
+#### Ouput Files
 
-#### Genome reference
+#### Genome Reference
 
-#### Packages
+#### Packages and Versions
+
+### Issues and TODO
