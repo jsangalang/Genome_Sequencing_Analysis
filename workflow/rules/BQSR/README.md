@@ -44,10 +44,12 @@ Dependencies :
 2.Variant Calling : to improve the accuracy of variant calling by applying BQSR to the input BAM file , it relies on the variant calling algorithm, such as GATK's HaplotypeCaller.
 
 3.Reference Genome and known alignment : BQSR relies on a reference genome for aligning the reads and known variants for estimating error rates .The availability and quality of the reference genome and known variant dataset can impact the accuracy of BQSR.
+```
 
+```
 4.Computational ressources : BQSR can be a computationally demanding method, particularly for NGS datasets of big size. The size of the input BAM file, the complexity of the reference genome, and the quantity of known variations all affect the execution time and resource needs.
 
-Packages and versios :
+Packages and versions :
 
 The most commonly used package for performing Base Quality Score Recalibration (BQSR) is the Genome Analysis Toolkit (GATK).
 
@@ -56,6 +58,11 @@ Here the version used is GATK 4.1.4.1
 
 SAMtools is a widely used set of command-line tools for manipulating SAM/BAM files, which are binary formats representing aligned sequencing reads
 SAMtools provides an extensive toolkit for general SAM/BAM file manipulation .
+
+```
+GATK: GATK 4.1.4.1
+Samtools:
+```
 
 The specific BQSR functionality in GATK is implemented in the following tools:
 
@@ -80,7 +87,12 @@ input:
 output:
         temp("bam/{sample}.nodup.recal.beforeReformat.bam")
 ```
+#### - Specifications of Input Files
 
+#### - Ouput Files
+#### - Genome Reference
+#### - Packages and Versions
+### 3. Issues and TODO
 
 
 
