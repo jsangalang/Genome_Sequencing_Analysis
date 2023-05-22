@@ -16,6 +16,9 @@ interfaces :
 
 1.input bam file : the bam file containing the aligned reads along with their associated base quality scores is required 
 
+<span data-color="red">input</span>:
+            "bam/{sample}.bam"
+
 2.Reference Genome : BQSR relies on the reference genome , it's a known sequence for aligning reads as well as identifying potential errors in base quality scores.
 
 3.Known Variants: BQSR also relies and use a set of known variants derived from certain databases in order to estimate error rates and detect differences in the base quality scores.
