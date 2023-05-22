@@ -57,7 +57,7 @@ def build_TvN_targets(tsample, nsample):
         ANNOVAR.append("annovar_mutect2_TvN/" + tsample + "_Vs_" + nsample + ".avinput")
 
 def build_Tp_targets(tsample, PoN):
-    MUTECT2.append("Mutect2_Tp/" + tsample + "_PON_" + Pon + "_twicefiltered_Tp.vcf.gz")
+    MUTECT2.append("Mutect2_Tp/" + tsample + "_PON_" + PoN + "_twicefiltered_Tp.vcf.gz")
     
     if config["samples"] == "human":
         ONCOTATOR.append("oncotator_Tp_tsv_COSMIC/" + tsample  + "_PON_" + PoN + "_Tp_with_COSMIC.tsv")
