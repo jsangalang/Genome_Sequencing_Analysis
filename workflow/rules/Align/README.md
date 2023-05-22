@@ -1,10 +1,16 @@
-## [The SAM/BAM Format Specification](https://samtools.github.io/hts-specs/SAMtags.pdf)
+### 1. Description of Align Module
 
-[Learn bam file format](https://bookdown.org/content/24942ad6-9ed7-44e9-b214-1ea8ba9f0224/learning-the-bam-format.html)
+### 2. Description of Interfaces and Dependencies
 
-[sam/bam file format explanation](https://genome.sph.umich.edu/wiki/SAM)
+- Specifications of Input Files
 
-[SAM/BAM/CRAM Format](https://learn.gencore.bio.nyu.edu/ngs-file-formats/sambam-format/)
+- Ouput Files
+
+- Genome Reference
+
+- Packages and Versions
+
+### 3. Issues and TODO
 
 Single-end or paired-end DNA sample mapping using BWA
 
@@ -23,3 +29,10 @@ BWA-MEM: designed for aligning longer reads (e.g., Illumina HiSeq, NovaSeq) to a
 shell:
         "{params.bwa} mem -M -R \"@RG\\tID:bwa\\tSM:{wildcards.sample}\\tPL:ILLUMINA\\tLB:truseq\" -t {threads} {params.index} {input.fastq} | {params.samtools} view -bS - | {params.samtools} sort -@ {threads} - -o {output} 2> {log}"
 ```
+### [The SAM/BAM Format Specification](https://samtools.github.io/hts-specs/SAMtags.pdf)
+
+[Learn bam file format](https://bookdown.org/content/24942ad6-9ed7-44e9-b214-1ea8ba9f0224/learning-the-bam-format.html)
+
+[sam/bam file format explanation](https://genome.sph.umich.edu/wiki/SAM)
+
+[SAM/BAM/CRAM Format](https://learn.gencore.bio.nyu.edu/ngs-file-formats/sambam-format/)
