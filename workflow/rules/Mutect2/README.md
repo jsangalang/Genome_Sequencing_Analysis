@@ -1,16 +1,6 @@
-### 1. Description of Align Module
+### 1. Description of Mutect2 Module
 
-### 2. Description of Interfaces and Dependencies
-
-- Specifications of Input Files
-
-- Ouput Files
-
-- Genome Reference
-
-- Packages and Versions
-
-### 3. Issues and TODO
+### 2. Issues and TODO
 
 ### FilterByOrientationBias is vanished from GATK tools since version 4.1.6.0
 
