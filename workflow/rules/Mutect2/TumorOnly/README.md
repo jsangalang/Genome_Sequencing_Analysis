@@ -1,4 +1,4 @@
-### 1. Description of Align Module
+### 1. Description of Mutect2 Tumor Only Submodule
 
 ### 2. Description of Interfaces and Dependencies
 
