@@ -13,8 +13,11 @@ it is done over several different covariates (mainly sequence context and positi
 ### 2. Description of Interfaces and Dependencies
 
 interfaces : 
+
 1.input bam file : the bam file containing the aligned reads along with their associated base quality scores is required 
+
 2.Reference Genome : BQSR relies on the reference genome , it's a known sequence for aligning reads as well as identifying potential errors in base quality scores.
+
 3.Known Variants: BQSR also relies and use a set of known variants derived from certain databases in order to estimate error rates and detect differences in the base quality scores.
 4.Read Group Information : present in the bam file , used to improve the accuracy of the recaibration as it contains informations abou the sequencing platform , library preparation as well as other experimental details 
 5.Output Recalibrated BAM file : at last the BQSR produce a recalibrated BAM file as output containing the original reads with updated base quality scores . this output is served laters as an input for variant calling algorithm
